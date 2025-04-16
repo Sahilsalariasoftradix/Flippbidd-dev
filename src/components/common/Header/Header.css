@@ -1,0 +1,273 @@
+.header {
+  padding: 15px 0;
+  background-color: #ffffff;
+  width: 100%;
+  z-index: 100;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+.header .container {
+  padding-left: 80px;
+  padding-right: 60px;
+  width: 100%;
+  max-width: 100%;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo-img {
+  height: 40px;
+  width: auto;
+  object-fit: contain;
+}
+
+.nav-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-item {
+  margin: 0 15px;
+ 
+}
+
+.nav-link {
+  font-family: 'Graphik', sans-serif;
+  color: #6B7280;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 15px;
+  transition: color 0.3s ease;
+}
+
+.nav-link:hover {
+  color: #00ACDB;
+}
+
+.nav-link.active {
+  color: #000F1B;
+}
+
+.header-buttons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-right: 0;
+}
+
+.auth-buttons {
+  display: flex;
+  gap: 10px;
+  margin: 0;
+}
+
+.auth-buttons .btn {
+  margin: 0;
+}
+
+.auth-buttons .btn-primary-gradient:first-child {
+  border-radius: 8px;
+  margin-right: 0;
+  
+}
+
+.demo-btn-container {
+  margin-right: 0;
+}
+
+.btn-primary-gradient {
+  background: linear-gradient(to right, #003F79, #00ACDB);
+  color: white;
+  border: none;
+  min-width: 120px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  font-size: 14px;
+  text-align: center;
+  letter-spacing: 0.5px;
+}
+
+.btn-primary-gradient:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.auth-buttons .btn-outline {
+  margin: 0;
+}
+
+.demo-btn-container .btn {
+  margin: 0;
+}
+
+.btn {
+  min-width: 120px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 24px;
+  border-radius: 4px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  font-size: 14px;
+  text-align: center;
+  letter-spacing: 0.5px;
+}
+
+.btn-outline {
+  background: transparent;
+  color: #fff;
+  border: 1px solid #fff;
+  box-sizing: border-box;
+}
+
+.btn-outline:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.demo-btn {
+  background-color: #CCF1F7;
+  color: #00ACDB;
+  border: none;
+  font-family: 'Graphik', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 8px;
+}
+
+.demo-btn:hover {
+  background-color: #b3e7f0;
+}
+
+.mobile-menu-toggle {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 30px;
+  height: 21px;
+  cursor: pointer;
+}
+
+.mobile-menu-toggle span {
+  display: block;
+  height: 3px;
+  width: 100%;
+  background-color: #333;
+  border-radius: 3px;
+}
+
+/* Default state */
+.mobile-only {
+  display: none;
+}
+
+.desktop-only {
+  display: block;
+}
+
+@media (min-width: 769px) {
+  .main-nav .hide-desktop {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .header {
+    background-color: #ffffff;
+  }
+  
+  .header .container {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+  
+  .main-nav {
+    position: fixed;
+    top: 70px;
+    left: -100%;
+    width: 80%;
+    height: calc(100vh - 70px);
+    background-color: white;
+    padding: 20px;
+    transition: left 0.3s ease;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+    z-index: 99;
+  }
+  
+  .main-nav.active {
+    left: 0;
+    display: block;
+  }
+  
+  .nav-list {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .nav-item {
+    margin: 15px 0;
+    width: 100%;
+  }
+  
+  .nav-link {
+    color: #333;
+    display: block;
+    padding: 5px 0;
+  }
+  
+  /* Mobile-specific overrides */
+  .mobile-only {
+    display: block;
+    margin-top: 20px;
+  }
+  
+  /* Make auth buttons display horizontally in mobile view */
+  .mobile-auth-container {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    margin-top: 20px;
+    width: 100%;
+  }
+
+  .mobile-only.auth-btn-container {
+    display: inline-block;
+    margin-right: 0;
+  }
+
+  .nav-item.auth-btn-container.mobile-only {
+    display: inline-block;
+    width: auto;
+  }
+
+  /* Create a container for auth buttons in mobile view */
+  .nav-item.auth-btn-container.mobile-only + .nav-item.auth-btn-container.mobile-only {
+    margin-left: 10px;
+  }
+  
+  .desktop-only {
+    display: none;
+  }
+  
+  .hide-mobile {
+    display: none;
+  }
+}
+

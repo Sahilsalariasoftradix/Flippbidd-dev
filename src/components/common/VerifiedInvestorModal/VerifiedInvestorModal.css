@@ -1,0 +1,384 @@
+.verified-investor-modal .modal-container {
+  padding: 0;
+  max-width: 650px;
+  overflow: hidden;
+  border-radius: 15px;
+}
+
+.verified-investor-modal .modal-close-btn {
+  top: 10px;
+  right: 10px;
+  color: white;
+  z-index: 10;
+  background-color: rgba(255, 255, 255, 0.2);
+  height: 24px;
+  width: 24px;
+  font-size: 16px;
+}
+
+/* Gradient header with profile cards */
+.modal-header-gradient {
+  background: linear-gradient(135deg, #8E3EAD, #00ACDB);
+  padding: 20px;
+  position: relative;
+  min-height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.profile-cards-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+  position: relative;
+  width: 100%;
+}
+
+.profile-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  text-align: center;
+  white-space: nowrap;
+  transform-origin: center;
+  transform: scale(0.9);
+  transition: transform 0.3s ease;
+}
+
+.profile-card.center-card {
+  transform: scale(1.15);
+  z-index: 5;
+}
+
+.profile-circle {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 600;
+  color: #8E3EAD;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 4px;
+}
+
+.profile-text {
+  color: white;
+  margin-top: 5px;
+  text-align: center;
+}
+
+.profile-name {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.profile-role {
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+/* Form Container */
+.modal-content-wrapper {
+  padding: 20px 30px 30px;
+}
+
+.modal-title {
+  font-family: 'Graphik', sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  color: #575665;
+  margin-top: 30px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.title-colored {
+  background: linear-gradient(to right, #C830EB, #00ACDB);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+  display: inline-block;
+}
+
+/* Form Layout */
+.investor-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.form-row {
+  display: flex;
+  gap: 15px;
+  width: 100%;
+}
+
+.form-group {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.form-group.full-width {
+  width: 100%;
+}
+
+.form-group label {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #8E3EAD;
+}
+
+.form-group .icon {
+  width: 16px;
+  height: 16px;
+  display: inline-block;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+/* Icons for form fields */
+.user-icon::before {
+  content: "👤";
+}
+
+.email-icon::before {
+  content: "✉️";
+}
+
+.phone-icon::before {
+  content: "📱";
+}
+
+.company-icon::before {
+  content: "🏢";
+}
+
+.profession-icon::before {
+  content: "👔";
+}
+
+.referral-icon::before {
+  content: "👥";
+}
+
+.location-icon::before {
+  content: "📍";
+}
+
+.calendar-icon::before {
+  content: "📅";
+}
+
+.price-icon::before {
+  content: "💰";
+}
+
+.sold-icon::before {
+  content: "💲";
+}
+
+.interest-icon::before {
+  content: "🔍";
+}
+
+.about-icon::before {
+  content: "📝";
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 12px 12px 12px 36px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border-color 0.3s ease;
+  color: #555;
+}
+
+.form-group input::placeholder,
+.form-group select::placeholder,
+.form-group textarea::placeholder {
+  color: #aaa;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #8E3EAD;
+}
+
+.form-group textarea {
+  resize: none;
+  min-height: 80px;
+}
+
+/* Phone input styling */
+.phone-container {
+  width: 100%;
+}
+
+.phone-input {
+  width: 100% !important;
+  height: auto !important;
+  padding-left: 46px !important;
+  font-size: 14px !important;
+  border: 1px solid #ddd !important;
+  border-radius: 6px !important;
+  box-shadow: none !important;
+  background-color: white !important;
+  padding-top: 12px !important;
+  padding-bottom: 12px !important;
+}
+
+.react-tel-input .flag-dropdown {
+  background-color: transparent !important;
+  border: none !important;
+  left: 12px !important;
+}
+
+.react-tel-input .selected-flag {
+  padding: 0 !important;
+  background-color: transparent !important;
+}
+
+/* Social Media Links Section */
+.social-media-group {
+  display: flex;
+  width: 100%;
+}
+
+.social-media-group input {
+  flex: 1;
+  margin-right: 10px;
+}
+
+.social-buttons {
+  display: flex;
+  gap: 10px;
+  margin-left: 10px;
+  white-space: nowrap;
+}
+
+.save-btn {
+  padding: 6px 15px;
+  background-color: #f0f0f0;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #555;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.save-btn:hover {
+  background-color: #e6e6e6;
+}
+
+.more-btn {
+  padding: 6px 10px;
+  background: none;
+  border: none;
+  color: #8E3EAD;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.more-btn:hover {
+  text-decoration: underline;
+}
+
+/* Submit Button */
+.form-submit {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.submit-button {
+  padding: 12px 30px;
+  background: #2a5db0;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.submit-button:hover {
+  background-color: #234a8e;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .form-row {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .social-media-group {
+    flex-direction: column;
+  }
+
+  .social-buttons {
+    margin-top: 10px;
+    margin-left: 0;
+  }
+
+  .modal-header-gradient {
+    padding: 15px;
+  }
+
+  .profile-cards-container {
+    gap: 15px;
+  }
+
+  .profile-circle {
+    width: 40px;
+    height: 40px;
+    font-size: 16px;
+  }
+
+  .modal-content-wrapper {
+    padding: 15px;
+  }
+
+  .modal-title {
+    font-size: 22px;
+    margin-bottom: 15px;
+  }
+}
+
+.image-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.investor-verified-image {
+  margin-top: 60px;
+  max-width: 100%;
+  max-height: 350px;
+  object-fit: fill;
+  z-index: 10;
+}

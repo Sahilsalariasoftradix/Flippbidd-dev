@@ -1,0 +1,14 @@
+.home-page {
+  padding-top: 70px; /* Add padding to account for fixed header height */
+  overflow-x: hidden;
+}
+
+/* For smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Since HeroSection already has its own margin-top, we need to reset it */
+.home-page > *:first-child {
+  margin-top: 0;
+} 

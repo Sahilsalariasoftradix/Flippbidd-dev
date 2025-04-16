@@ -1,0 +1,167 @@
+.investor-services-section {
+  padding: 70px 0;
+  background-color: #ffffff;
+}
+
+.section-header {
+  margin-bottom: 50px;
+  text-align: center;
+}
+
+.section-title {
+  font-size: 36px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.title-primary {
+  color: #b942ff;
+}
+
+.title-secondary {
+  color: #0090e1;
+}
+
+.title-subtitle {
+  font-size: 28px;
+  color: #6247aa;
+  margin-top: 5px;
+}
+
+.services-cards {
+  display: flex;
+  gap: 30px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.service-card {
+  flex: 1;
+  min-width: 300px;
+  max-width: 550px;
+  background-size: cover;
+  background-position: center;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.service-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(180deg, rgba(0, 63, 121, 0.7) 0%, rgba(0, 172, 219, 0.7) 100%);
+  border-radius: 15px;
+}
+
+.card-content {
+  position: relative;
+  z-index: 2;
+  padding: 30px;
+  color: #ffffff;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.icon-wrapper {
+  width: 50px;
+  height: 50px;
+  background-color: #ffffff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 15px;
+}
+
+.service-icon {
+  width: 30px;
+  height: 30px;
+}
+
+.service-email {
+  display: flex;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  padding: 5px 15px;
+  margin-bottom: 20px;
+  align-self: flex-start;
+}
+
+.email-icon {
+  width: 20px;
+  height: 20px;
+  margin-right: 10px;
+}
+
+.service-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 15px;
+}
+
+.service-description {
+  font-size: 16px;
+  line-height: 1.6;
+  margin-bottom: 30px;
+  flex-grow: 1;
+}
+
+.contact-button {
+  display: inline-block;
+  font-weight: 600;
+  padding: 10px 25px;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  align-self: flex-start;
+}
+
+.gradient-button {
+  background: linear-gradient(90deg, #003F79 0%, #00ACDB 100%);
+  color: #ffffff;
+}
+
+.white-button {
+  background-color: #ffffff;
+  color: #003F79;
+  border: 1px solid #eaeaea;
+}
+
+.white-button span {
+  background-image: linear-gradient(90deg, #003F79 0%, #00ACDB 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.contact-button:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .services-cards {
+    flex-direction: column;
+  }
+  
+  .service-card {
+    max-width: 100%;
+  }
+  
+  .section-title {
+    font-size: 28px;
+  }
+  
+  .title-subtitle {
+    font-size: 22px;
+  }
+} 

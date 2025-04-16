@@ -1,0 +1,169 @@
+.polygon-section {
+  padding: 80px 0;
+  background-color: #ffffff;
+  width: 100%;
+}
+
+.polygon-title {
+  text-align: left;
+  font-size: 2.2rem;
+  font-weight: bold;
+  margin-bottom: 50px;
+  position: relative;
+  display: block;
+  color: #575665;
+  padding-left: 0;
+}
+
+.polygon-title .highlight {
+  background: linear-gradient(to right, #003F79, #00ACDB);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.polygon-content {
+  display: flex;
+  justify-content: space-between;
+  gap: 0;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+.polygon-features {
+  flex: 1;
+  max-width: 50%;
+  padding-left: 80px;
+  padding-right: 20px;
+}
+
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 25px;
+}
+
+.polygon-feature-item {
+  display: flex;
+  align-items: center;
+  font-size: 1rem;
+  padding: 15px 15px 15px 40px;
+  border-radius: 8px;
+  background-color: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  height: 65px;
+  position: relative;
+}
+
+.polygon-feature-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.polygon-feature-icon-container {
+  width: 30px;
+  height: 30px;
+  min-width: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  left: -15px;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: white;
+  border-radius: 50%;
+  z-index: 2;
+}
+
+.polygon-feature-icon {
+  width: 30px;
+  height: 30px;
+}
+
+.polygon-feature-text {
+  font-weight: 500;
+  color: #333;
+}
+
+.polygon-map-container {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding-right: 80px;
+  background: transparent;
+}
+
+.polygon-map {
+  max-width: 550px;
+  height: auto;
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent;
+}
+
+@media (max-width: 991px) {
+  .polygon-content {
+    flex-direction: column-reverse;
+  }
+  
+  .polygon-map-container {
+    margin-bottom: 40px;
+    justify-content: center;
+    width: 100%;
+    max-width: 100%;
+  }
+  
+  .polygon-map {
+    max-width: 400px;
+  }
+  
+  .polygon-features {
+    padding-left: 40px;
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .polygon-section {
+    padding: 60px 0;
+  }
+  
+  .polygon-title {
+    font-size: 1.8rem;
+  }
+  
+  .feature-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  
+  .polygon-feature-item {
+    padding: 12px 12px 12px 35px;
+    height: 55px;
+  }
+  
+  .polygon-feature-icon-container {
+    width: 25px;
+    height: 25px;
+    min-width: 25px;
+    left: -12px;
+  }
+  
+  .polygon-feature-icon {
+    width: 25px;
+    height: 25px;
+  }
+  
+  .polygon-map {
+    max-width: 320px;
+  }
+  
+  .polygon-features {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+} 

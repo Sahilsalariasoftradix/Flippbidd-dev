@@ -1,0 +1,232 @@
+.properties-section {
+  padding: 80px 0;
+  background-color: #f9f9f9;
+}
+
+.section-title {
+  text-align: center;
+  font-size: 2.2rem;
+  font-weight: bold;
+  margin-bottom: 50px;
+}
+
+.section-title.normal-text-color {
+  color: #575665;
+}
+
+.section-title .highlight {
+  background: linear-gradient(to right, #003F79, #00ACDB);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  padding-right: 5px;
+  color: transparent;
+}
+.section-title.custom-text-color  {
+  background: linear-gradient(to right, #003F79, #00ACDB);
+}
+
+.section-title .normal-text {
+  color: #575665 !important;
+}
+
+.properties-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+  margin-bottom: 40px;
+}
+
+.property-card {
+  background-color: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.property-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.property-image {
+  height: 200px;
+  position: relative;
+  overflow: hidden;
+}
+
+.property-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.property-info {
+  padding: 20px;
+  text-align: left;
+}
+
+.property-title {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 2px;
+  color: #333;
+  text-align: left;
+}
+
+.property-features {
+  display: flex;
+  margin-bottom: 4px;
+  gap: 20px;
+}
+
+.feature {
+  display: flex;
+  align-items: center;
+  font-size: 0.9rem;
+  color: #6B747B;
+}
+
+.feature i {
+  margin-right: 5px;
+  color: #6B747B;
+}
+
+.feature-icon {
+  width: 18px;
+  height: 18px;
+  margin-right: 5px;
+  display: inline-block;
+  vertical-align: middle;
+  object-fit: contain;
+  filter: none;
+  opacity: 1;
+}
+
+.property-address {
+  display: flex;
+  align-items: flex-start;
+  font-size: 0.85rem;
+  color: #6B747B;
+  margin-bottom: 15px;
+}
+
+.property-address i {
+  margin-right: 8px;
+  margin-top: 3px;
+  color: #6B747B;
+}
+
+.property-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.view-details-btn {
+  background: linear-gradient(to right, #003F79, #00ACDB);
+  color: white;
+  padding: 6px 30px;
+  border-radius: 5px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-decoration: none;
+  display: inline-block;
+  transition: all 0.3s ease;
+}
+
+.view-details-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
+}
+
+.property-price {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #00ACDB;
+  display: flex;
+  align-items: center;
+}
+
+.dollar-icon {
+  width: 22px;
+  height: 22px;
+  margin-right: 5px;
+}
+
+.property-price::before {
+  content: none;
+}
+
+.see-more-container {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.see-more-btn {
+  background-color: #e1f5fa;
+  color: #00ACDB;
+  padding: 10px 30px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  text-decoration: none;
+  display: inline-block;
+  transition: all 0.3s ease;
+}
+
+.see-more-btn:hover {
+  background-color: #c0ebf5;
+}
+
+.property-category-wrapper {
+  min-width: 100px;
+  display: block;
+  margin-bottom: 5px;
+  text-align: left;
+}
+
+.property-category {
+  font-size: 1rem;
+  font-weight: 600;
+  background: linear-gradient(to right, #C830EB, #00ACDB);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  display: inline-block;
+  margin-bottom: 0px;
+}
+
+/* Remove the property-type-info class since we're not using it anymore */
+.property-type-info {
+  display: none;
+}
+
+/* Responsive Styles */
+@media (max-width: 1024px) {
+  .properties-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .properties-section {
+    padding: 60px 0;
+  }
+  
+  .section-title {
+    font-size: 1.8rem;
+    margin-bottom: 30px;
+  }
+}
+
+@media (max-width: 576px) {
+  .properties-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .property-features {
+    gap: 15px;
+  }
+} 

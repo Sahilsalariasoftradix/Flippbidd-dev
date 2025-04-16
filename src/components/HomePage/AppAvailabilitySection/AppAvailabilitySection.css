@@ -1,0 +1,75 @@
+.app-availability-section {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+  padding: 80px 0;
+  text-align: center;
+  color: #ffffff;
+}
+
+.app-availability-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 1;
+}
+
+.app-availability-content {
+  position: relative;
+  z-index: 2;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.availability-title {
+  font-size: 42px;
+  font-weight: 700;
+  margin-bottom: 15px;
+}
+
+.availability-subtitle {
+  font-size: 24px;
+  margin-bottom: 40px;
+  opacity: 0.9;
+}
+
+.app-store-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.store-button img {
+  height: 50px;
+  transition: transform 0.3s ease;
+}
+
+.store-button:hover img {
+  transform: translateY(-5px);
+}
+
+@media (max-width: 768px) {
+  .app-availability-section {
+    padding: 60px 0;
+  }
+  
+  .availability-title {
+    font-size: 32px;
+  }
+  
+  .availability-subtitle {
+    font-size: 20px;
+    margin-bottom: 30px;
+  }
+  
+  .app-store-buttons {
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+  }
+} 
