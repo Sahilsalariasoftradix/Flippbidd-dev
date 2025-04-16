@@ -3,6 +3,7 @@ import "./PropertySearch.css";
 import { IMAGES } from "../../utils/constants";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
+// eslint-disable-next-line
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -34,10 +35,10 @@ const getProfessionsData = () => {
 
 const PropertySearch = () => {
   const [toast, setToast] = useState({ visible: false, message: "", type: "" });
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // eslint-disable-next-line
   const [profession, setProfession] = useState("");
   const [phone, setPhone] = useState("");
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // eslint-disable-next-line
   const [address, setAddress] = useState("");
   const professions = getProfessionsData();
 
@@ -62,11 +63,11 @@ const PropertySearch = () => {
   useEffect(() => {
     const searchAddress = localStorage.getItem("searchAddress");
     if (searchAddress) {
-      setAddress(searchAddress);
       setValue("address", searchAddress);
       // Clear the localStorage after using it
       localStorage.removeItem("searchAddress");
     }
+    // eslint-disable-next-line
   }, [setValue]);
 
   useEffect(() => {
