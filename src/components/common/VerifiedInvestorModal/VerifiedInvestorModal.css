@@ -232,13 +232,16 @@
 .phone-container {
   width: 100%;
 }
+.react-datepicker-wrapper {
+  width: 100% ;
+}
 
 .phone-input {
   width: 100% !important;
   height: auto !important;
   padding-left: 46px !important;
   font-size: 14px !important;
-  border: 1px solid #ddd !important;
+  border: 1px solid #ddd ;
   border-radius: 6px !important;
   box-shadow: none !important;
   background-color: white !important;

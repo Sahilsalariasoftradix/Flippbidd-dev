@@ -1,51 +1,77 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Modal from '../Modal/Modal';
 import PhoneInput from 'react-phone-input-2';
+import DatePicker from 'react-datepicker';
 import 'react-phone-input-2/lib/style.css';
+import 'react-datepicker/dist/react-datepicker.css';
 import './VerifiedInvestorModal.css';
 import { IMAGES } from '../../../utils/constants';
+import { useForm, useFieldArray } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+
+// Define validation schema
+const formSchema = z.object({
+  name: z.string().min(1, 'Name is required'),
+  email: z.string().email('Invalid email address'),
+  phone: z.string().min(10, 'Valid phone number is required'),
+  companyName: z.string().min(1, 'Company name is required'),
+  profession: z.string().min(1, 'Please select a profession'),
+  referralName: z.string().optional(),
+  propertyAddress: z.string().min(1, 'Property address is required'),
+  transactionDate: z.string().min(1, 'Transaction date is required'),
+  purchasePrice: z.string().min(1, 'Purchase price is required'),
+  soldPrice: z.string().min(1, 'Sold price is required'),
+  areasOfInterest: z.string().min(1, 'Areas of interest is required'),
+  aboutYourself: z.string().min(1, 'Please tell us about yourself'),
+  socialMediaLinks: z.array(
+    z.object({
+      url: z.string().min(1, 'Social media URL is required')
+    })
+  )
+});
 
 const VerifiedInvestorModal = ({ isOpen, onClose }) => {
-  const [socialMediaLinks, setSocialMediaLinks] = useState([{ platform: '', url: '' }]);
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    companyName: '',
-    profession: '',
-    referralName: '',
-    propertyAddress: '',
-    transactionDate: '',
-    purchasePrice: '',
-    soldPrice: '',
-    areasOfInterest: '',
-    aboutYourself: ''
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+    watch,
+    control
+  } = useForm({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: '',
+      email: '',
+      phone: '',
+      companyName: '',
+      profession: '',
+      referralName: '',
+      propertyAddress: '',
+      transactionDate: '',
+      purchasePrice: '',
+      soldPrice: '',
+      areasOfInterest: '',
+      aboutYourself: '',
+      socialMediaLinks: [{ url: '' }]
+    }
   });
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: 'socialMediaLinks'
+  });
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      append({ url: '' });
+    }
   };
 
-  const handlePhoneChange = (value) => {
-    setFormData(prev => ({ ...prev, phone: value }));
-  };
-
-  const handleSocialLinkChange = (index, field, value) => {
-    const updatedLinks = [...socialMediaLinks];
-    updatedLinks[index][field] = value;
-    setSocialMediaLinks(updatedLinks);
-  };
-
-  const addSocialLink = () => {
-    setSocialMediaLinks([...socialMediaLinks, { platform: '', url: '' }]);
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Handle form submission
-    console.log({ ...formData, socialMediaLinks });
-    // Close modal after submission
+  const onSubmit = (data) => {
+    console.log(data);
     onClose();
   };
 
@@ -78,8 +104,10 @@ const VerifiedInvestorModal = ({ isOpen, onClose }) => {
           <span className="title-colored">Verified Investor</span> Request
         </h2>
 
-        <form onSubmit={handleSubmit} className="investor-form">
+        <form onSubmit={handleSubmit(onSubmit)} className="investor-form">
           <div className="form-row">
+            <div className='w-full'>
+
             <div className="form-group">
               <label htmlFor="name">
                 <img src={IMAGES.GRADIENT_USER} alt="Person" className="icon" />
@@ -87,13 +115,15 @@ const VerifiedInvestorModal = ({ isOpen, onClose }) => {
               <input
                 type="text"
                 id="name"
-                name="name"
                 placeholder="Name"
-                value={formData.name}
-                onChange={handleChange}
-                required
+                className={`${errors.name ? '!border-red-500' : ''}`}
+                {...register('name')}
               />
             </div>
+              {errors.name && <p className="error-message-verified-investor">{errors.name.message}</p>}
+            </div>
+            <div className='w-full'>
+
             <div className="form-group">
               <label htmlFor="email">
                 <img src={IMAGES.GRADIENT_MAIL} alt="Person" className="icon" />
@@ -101,60 +131,64 @@ const VerifiedInvestorModal = ({ isOpen, onClose }) => {
               <input
                 type="email"
                 id="email"
-                name="email"
                 placeholder="Email"
-                value={formData.email}
-                onChange={handleChange}
-                required
+                className={`${errors.email ? '!border-red-500' : ''}`}
+                {...register('email')}
               />
+            </div>
+              {errors.email && <p className="error-message-verified-investor">{errors.email.message}</p>}
             </div>
           </div>
 
           <div className="form-row">
-            <div className="form-group">
+         <div className='w-full'>
+         <div className="form-group">
               <label htmlFor="phone">
                 <i className="icon phone-icon"></i>
               </label>
               <PhoneInput
                 country={'us'}
-                value={formData.phone}
-                onChange={handlePhoneChange}
                 inputProps={{
                   name: 'phone',
                   required: true,
                   placeholder: 'Phone'
                 }}
-                containerClass="phone-container"
-                inputClass="phone-input"
+                containerClass={`phone-container`}
+                inputClass={`phone-input  ${errors.phone ? '!border-red-500' : ''}`}
+                onChange={(value) => setValue('phone', value)}
               />
             </div>
+              {errors.phone && <p className="error-message-verified-investor">{errors.phone.message}</p>}
+         </div>
 
-            <div className="form-group">
+          <div className='w-full'>
+          <div className="form-group">
               <label htmlFor="companyName">
                 <img src="/images/png/building-fill.png" alt="Building" className="icon" />
               </label>
               <input
                 type="text"
                 id="companyName"
-                name="companyName"
                 placeholder="Company Name"
-                value={formData.companyName}
-                onChange={handleChange}
+                className={`${errors.companyName ? '!border-red-500' : ''}`}
+                {...register('companyName')}
               />
             </div>
+              {errors.companyName && <p className="error-message-verified-investor">{errors.companyName.message}</p>}
+          </div>
           </div>
 
           <div className="form-row">
+          <div className='w-full'>
+
             <div className="form-group">
               <label htmlFor="profession">
                 <img src="/images/png/person-profession-icon.png" alt="Profession" className="icon" />
               </label>
               <select
                 id="profession"
-                name="profession"
-                value={formData.profession}
-                onChange={handleChange}
-                required
+                className={`${errors.profession ? '!border-red-500' : ''}`}
+                {...register('profession')}
               >
                 <option value="">Select Profession</option>
                 {professionOptions.map((option, index) => (
@@ -164,20 +198,23 @@ const VerifiedInvestorModal = ({ isOpen, onClose }) => {
                 ))}
               </select>
             </div>
+              {errors.profession && <p className="error-message-verified-investor">{errors.profession.message}</p>}
+          </div>
 
-            <div className="form-group">
+          <div className='w-full'>
+          <div className="form-group">
               <label htmlFor="referralName">
                 <img src="/images/png/person-referral-icon.png" alt="Referral Name" className="icon" />
               </label>
               <input
                 type="text"
                 id="referralName"
-                name="referralName"
                 placeholder="Enter Referral Name"
-                value={formData.referralName}
-                onChange={handleChange}
+                {...register('referralName')}
               />
             </div>
+
+          </div>
           </div>
 
           {/* Social Media Links */}
@@ -189,49 +226,71 @@ const VerifiedInvestorModal = ({ isOpen, onClose }) => {
               <input
                 type="text"
                 id="socialMedia"
-                placeholder="Enter Social Media Links"
-                value={socialMediaLinks[0].url}
-                onChange={(e) => handleSocialLinkChange(0, 'url', e.target.value)}
+                placeholder="Enter social media URL and press Enter"
+                className={`${errors.socialMediaLinks ? '!border-red-500' : ''}`}
+                onKeyPress={handleKeyPress}
+                {...register(`socialMediaLinks.${fields.length - 1}.url`)}
               />
-              <div className="social-buttons">
-                <button type="button" className="save-btn">Save</button>
-                <button type="button" className="more-btn" onClick={addSocialLink}>+ More</button>
-              </div>
+              <button type="button" className="more-btn" onClick={() => append({ url: '' })}>+ More</button>
             </div>
           </div>
 
+          {fields.length > 1 && (
+            <div className="grid grid-cols-2 gap-2">
+              {fields.slice(0, -1).map((field, index) => (
+                <div key={field.id} className="bg-slate-200 px-4 flex items-center py-2 gap-4 rounded-md">
+                  <button type="button" onClick={() => remove(index)}><img src="/images/svg/delete.svg" alt="" /></button>
+                  <input
+                    type="text"
+                    className='font-normal text-[14px] text-[#575665] text-start'
+                    {...register(`socialMediaLinks.${index}.url`)}
+                    disabled
+                  />
+                </div>
+              ))}
+            </div>
+          )}
+
           {/* Property Information */}
           <div className="form-row">
-            <div className="form-group">
+          <div className='w-full'>
+          <div className="form-group">
               <label htmlFor="propertyAddress">
                 <img src="/images/png/location-icon.png" alt="Property Address" className="icon" />
               </label>
               <input
                 type="text"
                 id="propertyAddress"
-                name="propertyAddress"
                 placeholder="Enter Property Address"
-                value={formData.propertyAddress}
-                onChange={handleChange}
+                className={`${errors.propertyAddress ? '!border-red-500' : ''}`}
+                {...register('propertyAddress')}
               />
             </div>
+              {errors.propertyAddress && <p className="error-message-verified-investor">{errors.propertyAddress.message}</p>}
+          </div>
           </div>
 
           <div className="form-row">
+            <div className='w-full'>
+
             <div className="form-group">
-              <label htmlFor="transactionDate">
+              <label htmlFor="transactionDate" className='z-10'>
                 <img src="/images/png/calendar-2-fill.png" alt="Transaction Date" className="icon" />
               </label>
-              <input
-                type="text"
+              <DatePicker
                 id="transactionDate"
-                name="transactionDate"
-                placeholder="Enter Transaction Date"
-                value={formData.transactionDate}
-                onChange={handleChange}
+                selected={watch('transactionDate') ? new Date(watch('transactionDate')) : null}
+                onChange={(date) => setValue('transactionDate', date ? date.toISOString().split('T')[0] : '')}
+                dateFormat="MM/dd/yyyy"
+                placeholderText="Enter Transaction Date"
+                className={`w-full ${errors.transactionDate ? '!border-red-500' : ''}`}
+                isClearable
+                onClear={() => setValue('transactionDate', '')}
               />
             </div>
-
+              {errors.transactionDate && <p className="error-message-verified-investor">{errors.transactionDate.message}</p>}
+            </div>
+            <div className='w-full'>
             <div className="form-group">
               <label htmlFor="purchasePrice">
                 <img src="/images/png/money-dollar-circle-fill.png" alt="Purchase Price" className="icon" />
@@ -239,15 +298,18 @@ const VerifiedInvestorModal = ({ isOpen, onClose }) => {
               <input
                 type="text"
                 id="purchasePrice"
-                name="purchasePrice"
                 placeholder="Enter Purchase Price"
-                value={formData.purchasePrice}
-                onChange={handleChange}
+                className={`${errors.purchasePrice ? '!border-red-500' : ''}`}
+                {...register('purchasePrice')}
               />
+            </div>
+              {errors.purchasePrice && <p className="error-message-verified-investor">{errors.purchasePrice.message}</p>}
             </div>
           </div>
 
           <div className="form-row">
+            <div className='w-full'>
+
             <div className="form-group">
               <label htmlFor="soldPrice">
                 <img src="/images/png/price-tag-3-fill.png" alt="Sold Price" className="icon" />
@@ -255,42 +317,47 @@ const VerifiedInvestorModal = ({ isOpen, onClose }) => {
               <input
                 type="text"
                 id="soldPrice"
-                name="soldPrice"
                 placeholder="Enter Sold Price"
-                value={formData.soldPrice}
-                onChange={handleChange}
+                className={`${errors.soldPrice ? '!border-red-500' : ''}`}
+                {...register('soldPrice')}
               />
             </div>
+              {errors.soldPrice && <p className="error-message-verified-investor">{errors.soldPrice.message}</p>}
+            </div>
 
-            <div className="form-group">
+           <div className='w-full'>
+           <div className="form-group">
               <label htmlFor="areasOfInterest">
                 <img src="/images/png/area-icon.png" alt="Areas Of Interest" className="icon" />
               </label>
               <input
                 type="text"
                 id="areasOfInterest"
-                name="areasOfInterest"
                 placeholder="Areas of Interest"
-                value={formData.areasOfInterest}
-                onChange={handleChange}
+                className={`${errors.areasOfInterest ? '!border-red-500' : ''}`}
+                {...register('areasOfInterest')}
               />
             </div>
+              {errors.areasOfInterest && <p className="error-message-verified-investor">{errors.areasOfInterest.message}</p>}
+           </div>
           </div>
 
           <div className="form-row">
-            <div className="form-group full-width">
-              <label htmlFor="aboutYourself">
+          <div className='w-full'>
+          <div className="form-group full-width">
+              <label htmlFor="aboutYourself" className='!top-[22px]'>
                 <img src="/images/png/note-write-icon.png" alt="About Yourself" className="icon" />
               </label>
               <textarea
                 id="aboutYourself"
-                name="aboutYourself"
                 placeholder="Tell us a little about yourself."
-                value={formData.aboutYourself}
-                onChange={handleChange}
+                className={`${errors.aboutYourself ? '!border-red-500' : ''}`}
+                {...register('aboutYourself')}
                 rows="3"
               ></textarea>
             </div>
+              {errors.aboutYourself && <p className="error-message-verified-investor">{errors.aboutYourself.message}</p>}
+          </div>
           </div>
 
           <div className="form-submit">

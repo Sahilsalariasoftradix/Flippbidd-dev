@@ -33,7 +33,7 @@
 .pricing-card {
   background-color: #fff;
   border-radius: 12px;
-  overflow: hidden;
+  /* overflow: hidden; */
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
@@ -87,15 +87,38 @@
 
 .trial-badge {
   position: absolute;
-  top: 0;
+  top: -20px;
   left: 0;
-  background: linear-gradient(to right, #00ACDB, #0275d8);
+  background: linear-gradient(to right, #00ACDB, #C830EB);
   color: white;
   padding: 8px 16px;
   font-size: 0.8rem;
   font-weight: 600;
-  border-radius: 0 12px 0 12px;
+  border-radius: 12px 0px 0 0px;
   z-index: 3;
+}
+.trial-badge::before {
+  content: "";
+  position: absolute;
+  width: 0px;
+  border-left: 15px solid transparent;
+  border-right: 6px solid transparent;
+  border-bottom: 20px solid #0AA6DC6B;
+  height: 20px;
+  bottom: 16px;
+  z-index: 0;
+  left: 152px;
+}
+.trial-badge::after {
+  content: "";
+  position: absolute;
+  width: 50px;
+  border-top: 0px solid transparent;
+  border-left: 20px solid #C830EB;
+  border-bottom: 35.5px solid transparent;
+  height: 20px;
+  bottom: 0;
+  left: 147px;
 }
 
 .price-header {
@@ -108,7 +131,7 @@
 }
 
 .price-amount {
-  color: #00ACDB;
+  /* color: #003F79; */
   font-size: 3rem;
   font-weight: 700;
   margin-bottom: -5px;

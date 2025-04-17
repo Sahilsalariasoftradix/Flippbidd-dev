@@ -161,7 +161,6 @@
   background-position: center;
   background-repeat: no-repeat;
   background-size: contain;
-  opacity: 0.7;
 }
 
 /* Icons for form fields */
@@ -205,8 +204,8 @@
   content: "📝";
 }
 
+/* Form Inputs */
 .form-group input,
-.form-group select,
 .form-group textarea {
   width: 100%;
   padding: 12px 12px 12px 36px;
@@ -218,21 +217,49 @@
 }
 
 .form-group input::placeholder,
-.form-group select::placeholder,
 .form-group textarea::placeholder {
   color: #aaa;
 }
 
 .form-group input:focus,
-.form-group select:focus,
 .form-group textarea:focus {
   outline: none;
   border-color: #00ACDB;
 }
 
-.form-group textarea {
-  resize: none;
-  min-height: 80px;
+/* React Select Styling */
+.form-group .react-select__control {
+  width: 100%;
+  min-height: 44px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border-color 0.3s ease;
+}
+
+.form-group .react-select__control--is-focused {
+  border-color: #00ACDB;
+  box-shadow: none;
+}
+
+.form-group .react-select__value-container {
+  padding-left: 36px;
+}
+
+.form-group .react-select__placeholder {
+  color: #aaa;
+}
+
+.form-group .react-select__single-value {
+  color: #555;
+}
+
+.form-group .react-select__indicator {
+  color: #00ACDB;
+}
+
+.form-group .react-select__indicator:hover {
+  color: #00ACDB;
 }
 
 /* Phone input styling */
@@ -245,7 +272,7 @@
   height: auto !important;
   padding-left: 46px !important;
   font-size: 14px !important;
-  border: 1px solid #ddd !important;
+  border: 1px solid #ddd;
   border-radius: 6px !important;
   box-shadow: none !important;
   background-color: white !important;
@@ -313,6 +340,16 @@
   text-decoration: underline;
 }
 
+/* Error Messages */
+.error-message {
+  position: absolute;
+  bottom: -18px;
+  left: 0;
+  color: #ef4444;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
 /* Submit Button */
 .form-submit {
   margin-top: 20px;
@@ -372,4 +409,62 @@
     font-size: 22px;
     margin-bottom: 15px;
   }
+}
+
+.social-links-list {
+  margin-top: 10px;
+  width: 100%;
+}
+
+.social-link-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  gap: 8px;
+  padding: 0 15px;
+}
+
+.social-link-item input {
+  flex: 1;
+  background-color: #f5f5f5;
+  border: 1px solid #e0e0e0;
+  padding: 8px 12px;
+  border-radius: 4px;
+  color: #666;
+}
+
+.social-link-item button {
+  background: #ff4d4f;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.2s;
+}
+
+.social-link-item button:hover {
+  background: #ff7875;
+}
+
+.error-message {
+  color: #ff4d4f;
+  font-size: 12px;
+  margin-top: 4px;
+  display: block;
+}
+
+.form-group {
+  position: relative;
+}
+
+.form-group .error-message {
+  position: absolute;
+  bottom: -20px;
+  left: 0;
 } 

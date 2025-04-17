@@ -1,46 +1,69 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Modal from '../Modal/Modal';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 import './AffiliateModal.css';
 import { IMAGES } from '../../../utils/constants';
+import { useForm, useFieldArray } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+
+const affiliateSchema = z.object({
+  name: z.string().min(1, 'Name is required'),
+  email: z.string().email('Invalid email address'),
+  phone: z.string().min(1, 'Phone number is required'),
+  companyName: z.string().optional(),
+  profession: z.string().min(1, 'Profession is required'),
+  referralName: z.string().optional(),
+  followersCount: z.string().min(1, 'Followers count is required'),
+  note: z.string().min(1, 'Note is required'),
+  socialMediaLinks: z.array(
+    z.object({
+      url: z.string().min(1, 'Social media URL is required')
+    })
+  )
+});
+
 const AffiliateModal = ({ isOpen, onClose }) => {
-  const [socialMediaLinks, setSocialMediaLinks] = useState([{ platform: 'twitter', url: '' }]);
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    companyName: '',
-    profession: '',
-    referralName: '',
-    followersCount: '',
-    note: ''
+  const {
+    register,
+    control,
+    handleSubmit,
+    setValue,
+    formState: { errors }
+  } = useForm({
+    resolver: zodResolver(affiliateSchema),
+    defaultValues: {
+      name: '',
+      email: '',
+      phone: '',
+      companyName: '',
+      profession: '',
+      referralName: '',
+      followersCount: '',
+      note: '',
+      socialMediaLinks: [{ url: '' }]
+    }
   });
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: 'socialMediaLinks'
+  });
 
   const handlePhoneChange = (value) => {
-    setFormData(prev => ({ ...prev, phone: value }));
+    setValue('phone', value);
   };
 
-  const handleSocialLinkChange = (index, field, value) => {
-    const updatedLinks = [...socialMediaLinks];
-    updatedLinks[index][field] = value;
-    setSocialMediaLinks(updatedLinks);
+  const handleKeyPress = (e, index) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      append({ url: '' });
+    }
   };
 
-  const addSocialLink = () => {
-    setSocialMediaLinks([...socialMediaLinks, { platform: 'instagram', url: '' }]);
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Handle form submission
-    console.log({ ...formData, socialMediaLinks });
-    // Close modal after submission
+  const onSubmit = (data) => {
+    console.log(data);
     onClose();
   };
 
@@ -67,42 +90,40 @@ const AffiliateModal = ({ isOpen, onClose }) => {
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} className="affiliate-modal">
-        <img src={IMAGES.AFFILIATE_BG} alt="Affiliate Background" style={{ width: 'auto', maxWidth: '100%' }} />
+      <img src={IMAGES.AFFILIATE_BG} alt="Affiliate Background" style={{ width: 'auto', maxWidth: '100%' }} />
       <div className="modal-content-wrapper">
         <h2 className="modal-title">
           Become a <span className="title-colored">FlippBidd</span> Affiliate
         </h2>
         
-        <form onSubmit={handleSubmit} className="affiliate-form">
+        <form onSubmit={handleSubmit(onSubmit)} className="affiliate-form">
           <div className="form-row">
             <div className="form-group">
               <label htmlFor="name">
-              <img src={IMAGES.GRADIENT_USER} alt="user" style={{width: '20px', height: '20px'}} /> 
+                <img src={IMAGES.GRADIENT_USER} alt="user" style={{width: '20px', height: '20px'}} /> 
               </label>
               <input
+                className={`${errors.name ? '!border-red-500' : ''}`}
                 type="text"
                 id="name"
-                name="name"
                 placeholder="Name"
-                value={formData.name}
-                onChange={handleChange}
-                required
+                {...register('name')}
               />
+              {errors.name && <span className="error-message">{errors.name.message}</span>}
             </div>
 
             <div className="form-group">
               <label htmlFor="email">
-              <img src={IMAGES.GRADIENT_MAIL} alt="user" style={{width: '20px', height: '20px'}} /> 
+                <img src={IMAGES.GRADIENT_MAIL} alt="user" style={{width: '20px', height: '20px'}} /> 
               </label>
               <input
                 type="email"
+                className={`${errors.email ? '!border-red-500' : ''}`}
                 id="email"
-                name="email"
                 placeholder="Email"
-                value={formData.email}
-                onChange={handleChange}
-                required
+                {...register('email')}
               />
+              {errors.email && <span className="error-message">{errors.email.message}</span>}
             </div>
           </div>
 
@@ -113,7 +134,6 @@ const AffiliateModal = ({ isOpen, onClose }) => {
               </label>
               <PhoneInput
                 country={'us'}
-                value={formData.phone}
                 onChange={handlePhoneChange}
                 inputProps={{
                   name: 'phone',
@@ -121,21 +141,20 @@ const AffiliateModal = ({ isOpen, onClose }) => {
                   placeholder: 'Phone'
                 }}
                 containerClass="phone-container"
-                inputClass="phone-input"
+                inputClass={`phone-input  ${errors.phone ? '!border-red-500' : ''}`}
               />
+              {errors.phone && <span className="error-message">{errors.phone.message}</span>}
             </div>
 
             <div className="form-group">
               <label htmlFor="companyName">
-              <img src={IMAGES.GRADIENT_BUILDING} alt="user" style={{width: '20px', height: '20px'}} /> 
+                <img src={IMAGES.GRADIENT_BUILDING} alt="user" style={{width: '20px', height: '20px'}} /> 
               </label>
               <input
                 type="text"
                 id="companyName"
-                name="companyName"
                 placeholder="Company Name"
-                value={formData.companyName}
-                onChange={handleChange}
+                {...register('companyName')}
               />
             </div>
           </div>
@@ -147,10 +166,8 @@ const AffiliateModal = ({ isOpen, onClose }) => {
               </label>
               <select
                 id="profession"
-                name="profession"
-                value={formData.profession}
-                onChange={handleChange}
-                required
+                {...register('profession')}
+                className={`${errors.profession ? '!border-red-500' : ''}`} 
               >
                 <option value="">Select Profession</option>
                 {professionOptions.map((option, index) => (
@@ -159,6 +176,7 @@ const AffiliateModal = ({ isOpen, onClose }) => {
                   </option>
                 ))}
               </select>
+              {errors.profession && <span className="error-message">{errors.profession.message}</span>}
             </div>
 
             <div className="form-group">
@@ -168,37 +186,45 @@ const AffiliateModal = ({ isOpen, onClose }) => {
               <input
                 type="text"
                 id="referralName"
-                name="referralName"
                 placeholder="Enter Referral Name"
-                value={formData.referralName}
-                onChange={handleChange}
+                {...register('referralName')}
               />
             </div>
           </div>
 
           {/* Social Media Links */}
-          {socialMediaLinks.map((link, index) => (
-            <div className="form-row" key={index}>
-              <div className="form-group social-media-group">
-                <label htmlFor={`socialMedia-${index}`}>
+          <div className="form-row">
+            <div className="form-group social-media-group">
+              <label>
                 <img src={IMAGES.GRADIENT_LINK_ICON} alt="user" style={{width: '20px', height: '20px'}} /> 
-                </label>
+              </label>
+              <input
+                type="text"
+                placeholder="Enter social media URL and press Enter"
+                onKeyPress={(e) => handleKeyPress(e, fields.length)}
+                {...register(`socialMediaLinks.${fields.length - 1}.url`)}
+              />
+              <button type="button" className="more-btn" onClick={() => append({ url: '' })}>+ More</button>
+            </div>
+          </div>
+
+          {/* Display added social media links */}  
+          {fields.length > 1 && (
+          <div className="grid grid-cols-2 gap-2">
+            {fields.slice(0, -1).map((field, index) => (
+              <div key={field.id} className="bg-slate-200 px-4 flex items-center py-2 gap-4 rounded-md">
+                <button type="button" onClick={() => remove(index)}><img src="/images/svg/delete.svg" alt="" /></button>
+              
                 <input
                   type="text"
-                  id={`socialMedia-${index}`}
-                  placeholder={link.platform === 'twitter' ? 'twitter.com/@username' : 'instagram.com/@username'}
-                  value={link.url}
-                  onChange={(e) => handleSocialLinkChange(index, 'url', e.target.value)}
+                  className='font-normal text-[14px] text-[#575665] text-start'
+                  {...register(`socialMediaLinks.${index}.url`)}
+                  disabled
                 />
-                {index === 0 && (
-                  <div className="social-buttons">
-                    <button type="button" className="save-btn">Save</button>
-                    <button type="button" className="more-btn" onClick={addSocialLink}>+ More</button>
-                  </div>
-                )}
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
+          )}
 
           <div className="form-row">
             <div className="form-group">
@@ -206,10 +232,9 @@ const AffiliateModal = ({ isOpen, onClose }) => {
                 <img src={IMAGES.FOLLOWERS_ICON} alt="followers" style={{width: '20px', height: '20px'}} />
               </label>
               <select
+                className={`${errors.followersCount ? '!border-red-500' : ''}`}
                 id="followersCount"
-                name="followersCount"
-                value={formData.followersCount}
-                onChange={handleChange}
+                {...register('followersCount')}
               >
                 <option value="">Enter no. of Followers</option>
                 {followersOptions.map((option, index) => (
@@ -218,27 +243,28 @@ const AffiliateModal = ({ isOpen, onClose }) => {
                   </option>
                 ))}
               </select>
+              {errors.followersCount && <span className="error-message">{errors.followersCount.message}</span>}
             </div>
           </div>
 
           <div className="form-row">
             <div className="form-group full-width">
-              <label htmlFor="note">
-                <img src={IMAGES.WRITE_NOTE_ICON} alt="note" style={{width: '20px', height: '20px'}} />
+            <label htmlFor="note" className='!top-[22px]'>
+                <img src="/images/png/note-write-icon.png" alt="About Yourself" className="icon" />
               </label>
               <textarea
                 id="note"
-                name="note"
+                className={`${errors.note ? '!border-red-500' : ''}`}
                 placeholder="Write Note"
-                value={formData.note}
-                onChange={handleChange}
                 rows="3"
+                {...register('note')}
               ></textarea>
+              {errors.note && <span className="error-message">{errors.note.message}</span>}
             </div>
           </div>
 
           <div className="form-submit">
-            <button type="submit" className="submit-button">
+            <button type="submit" className="submit-button !w-[40%]">
               Submit Request
             </button>
           </div>

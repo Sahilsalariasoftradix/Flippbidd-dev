@@ -17,7 +17,7 @@ export const IMAGES = {
   LOGO: '/images/png/logo_ic.png',
   HOME_BG: '/images/png/home_img_bg.png',
   FEATURE_BG: '/images/png/flippbidd_key_feature_bg.png',
-  POLYGON_BG: '/images/png/polygon_lead_bg.png',
+  POLYGON_BG: '/images/png/polygon-search.png',
   DEMO_PROPERTY_BG: '/images/png/demo_property_bg.png',
   BIG_FLIPPBIDD_IC: '/images/png/big_flippbidd_ic.png',
   DOLLAR_ICON: '/images/svg/dollor_ic.svg',
@@ -94,5 +94,6 @@ export const ROUTES = {
   SEVEN_DAY_TRIAL: '/seven-day-trial',
   PROPERTY_SEARCH: '/property-search',
   SUBMIT_PROPERTY: '/submit-property',
+  BOOK_A_DEMO: '/book-a-demo',
   // Add other routes as needed
 }; 

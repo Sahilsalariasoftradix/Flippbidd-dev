@@ -95,7 +95,7 @@ const PricingSection = () => {
             >
               <div className="price-header">
                 {plan.trial && <div className="trial-badge">GET A 7-DAY TRIAL</div>}
-                <h3 className="price-amount">{plan.price}<span className="per-month">/Month</span></h3>
+                <h3 className="price-amount bg-gradient-to-r from-[#003F79] via-[#0160b8] to-[#00ACDB] inline-block text-transparent bg-clip-text">{plan.price}<span className="!text-sm">/Month</span></h3>
                 <h4 className="price-title">{plan.title}</h4>
               </div>
               

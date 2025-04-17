@@ -36,21 +36,21 @@ const Footer = () => {
               FlippBidd is the ultimate real estate investment platform, providing nationwide off-market leads, financial services, and data-driven insights to empower investors.
             </p>
             <div className="social-icons">
-              <button className="social-icon" aria-label="Facebook" style={{ backgroundColor: '#00ACDB', color: 'white' }}>
+              <a target='_blank' href={process.env.REACT_APP_FLIPPBID_FACEBOOK_URL} rel="noopener noreferrer" className="social-icon" aria-label="Facebook" style={{ backgroundColor: '#00ACDB', color: 'white' }}>
                 <i className="fab fa-facebook-f"></i>
-              </button>
-              <button className="social-icon" aria-label="LinkedIn" style={{ backgroundColor: '#00ACDB', color: 'white' }}>
+              </a>
+              <a target='_blank' href={process.env.REACT_APP_FLIPPBID_LINKEDIN_URL} rel="noopener noreferrer" className="social-icon" aria-label="LinkedIn" style={{ backgroundColor: '#00ACDB', color: 'white' }}>
                 <i className="fab fa-linkedin-in"></i>
-              </button>
-              <button className="social-icon" aria-label="Instagram" style={{ backgroundColor: '#00ACDB', color: 'white' }}>
+              </a>
+              <a target='_blank' href={process.env.REACT_APP_FLIPPBID_INSTAGRAM_URL} rel="noopener noreferrer" className="social-icon" aria-label="Instagram" style={{ backgroundColor: '#00ACDB', color: 'white' }}>
                 <i className="fab fa-instagram"></i>
-              </button>
-              <button className="social-icon" aria-label="YouTube" style={{ backgroundColor: '#00ACDB', color: 'white' }}>
+              </a>
+              <a target='_blank' href={process.env.REACT_APP_FLIPPBID_YOUTUBE_URL} rel="noopener noreferrer" className="social-icon" aria-label="YouTube" style={{ backgroundColor: '#00ACDB', color: 'white' }}>
                 <i className="fab fa-youtube"></i>
-              </button>
-              <button className="social-icon" aria-label="TikTok" style={{ backgroundColor: '#00ACDB', color: 'white' }}>
+              </a>
+              {/* <a target='_blank' href={process.env.REACT_APP_FLIPPBID_TIKTOK_URL} rel="noopener noreferrer" className="social-icon" aria-label="TikTok" style={{ backgroundColor: '#00ACDB', color: 'white' }}>
                 <i className="fab fa-tiktok"></i>
-              </button>
+              </a> */}
             </div>
           </div>
 
@@ -60,8 +60,8 @@ const Footer = () => {
               <ul>
                 <li><Link to={ROUTES.HOME}>Home</Link></li>
                 <li><Link to={ROUTES.SEVEN_DAY_TRIAL}>7 Day Trial</Link></li>
-                <li><Link to="#">Book a Demo</Link></li>
-                <li><Link to="#">Submit Property</Link></li>
+                <li><a href={process.env.REACT_APP_FLIPPBID_CALENDLY_URL} target="_blank" rel="noopener noreferrer">Book a Demo</a></li>
+                <li><Link to={ROUTES.SUBMIT_PROPERTY}>Submit Property</Link></li>
               </ul>
             </div>
 
@@ -74,8 +74,8 @@ const Footer = () => {
               <div className="contact-item">
                 <i className="far fa-calendar-alt"></i>
                 <p>
-                  <a href="https://calendly.com/flippbidd/flippbidd-network-intro-demo" target="_blank" rel="noopener noreferrer">
-                    https://calendly.com/flippbidd/flippbidd-network-intro-demo
+                  <a href={process.env.REACT_APP_FLIPPBID_CALENDLY_URL} target="_blank" rel="noopener noreferrer">
+                   {process.env.REACT_APP_FLIPPBID_CALENDLY_URL}
                   </a>
                 </p>
               </div>
@@ -92,12 +92,12 @@ const Footer = () => {
                 <button type="submit">Send</button>
               </div>
               <div className="app-downloads">
-                <button className="app-download-button" aria-label="Download on App Store">
+                <a target='_blank' href={process.env.REACT_APP_FLIPPBID_APPLE_STORE_URL} rel="noopener noreferrer" className="app-download-button" aria-label="Download on App Store">
                   <img src={`${process.env.PUBLIC_URL}${IMAGES.APPLE_STORE}`} alt="Download on App Store" />
-                </button>
-                <button className="app-download-button" aria-label="Get it on Google Play">
+                </a>
+                <a target='_blank' href={process.env.REACT_APP_FLIPPBID_GOOGLE_PLAY_URL} className="app-download-button" rel="noopener noreferrer" aria-label="Get it on Google Play">
                   <img src={`${process.env.PUBLIC_URL}${IMAGES.GOOGLE_PLAY}`} alt="Get it on Google Play" />
-                </button>
+                </a>
               </div>
             </div>
           </div>

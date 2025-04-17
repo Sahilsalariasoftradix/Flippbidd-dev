@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+.error-message-verified-investor {
+  @apply text-red-500 mt-[-10px] text-start text-xs;
+}
 body {
   margin: 0;
   font-family: "Graphik", sans-serif;

@@ -55,7 +55,9 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(180deg, rgba(0, 63, 121, 0.7) 0%, rgba(0, 172, 219, 0.7) 100%);
+  background: linear-gradient(135deg, #00acdbad, #a6f0f7bd, #fde3faba);
+
+
   border-radius: 15px;
 }
 
@@ -88,10 +90,11 @@
 .service-email {
   display: flex;
   align-items: center;
-  background-color: rgba(255, 255, 255, 0.2);
-  border-radius: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  color: #2B3842;
   padding: 5px 15px;
-  margin-bottom: 20px;
+  /* margin-bottom: 20px; */
   align-self: flex-start;
 }
 

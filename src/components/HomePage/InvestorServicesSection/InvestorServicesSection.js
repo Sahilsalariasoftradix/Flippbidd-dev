@@ -16,18 +16,20 @@ const InvestorServicesSection = () => {
         <div className="services-cards">
           {/* FlippBidd Pro Services Card */}
           <div className="service-card pro-services-card" style={{ backgroundImage: `url(${IMAGES.FLIPPBIDD_PRO_BG})` }}>
-            <div className="card-content">
-              <div className="icon-wrapper">
+            <div className="card-content text-start">
+            <div className='flex items-center gap-2 justify-between'>
+            <div className="icon-wrapper">
                 <img src={IMAGES.PERSON_ACHIEVEMENT} alt="Pro Services" className="service-icon" />
               </div>
               
               <div className="service-email">
                 <img src={IMAGES.GRADIENT_MAIL} alt="Email" className="email-icon" />
-                <span>LetsNetwork@flippbidd.com</span>
+                <span className='text-xs'>LetsNetwork@flippbidd.com</span>
               </div>
+            </div>
               
-              <h3 className="service-title">FlippBidd Pro-Services</h3>
-              <p className="service-description">
+              <h3 className="service-title text-[#000F1B]">FlippBidd Pro-Services</h3>
+              <p className="service-description text-[#2B3842]">
                 A premium platform connecting real estate professionals with top-tier investment opportunities, tools, and resources.
               </p>
               
@@ -36,19 +38,21 @@ const InvestorServicesSection = () => {
           </div>
           
           {/* National Lenders Card */}
-          <div className="service-card lenders-card" style={{ backgroundImage: `url(${IMAGES.NATIONAL_LENDERS_BG})` }}>
-            <div className="card-content">
-              <div className="icon-wrapper">
-                <img src={IMAGES.NATIONAL_LENDER_ICON} alt="National Lenders" className="service-icon" />
+          <div className="service-card before:!bg-none before:!content-[''] before:!bg-slate-50 before:opacity-[0.8] lenders-card" style={{ backgroundImage: `url(${IMAGES.NATIONAL_LENDERS_BG})` }}>
+            <div className="card-content text-start">
+            <div className='flex items-center gap-2 justify-between'>
+            <div className="icon-wrapper">
+                <img src={IMAGES.NATIONAL_LENDER_ICON} alt="Pro Services" className="service-icon" />
               </div>
               
               <div className="service-email">
                 <img src={IMAGES.GRADIENT_MAIL} alt="Email" className="email-icon" />
-                <span>LetsNetwork@flippbidd.com</span>
+                <span className='text-xs'>LetsNetwork@flippbidd.com</span>
               </div>
+            </div>
               
-              <h3 className="service-title">National Lenders</h3>
-              <p className="service-description">
+              <h3 className="service-title text-[#000F1B]">National Lenders</h3>
+              <p className="service-description text-[#2B3842]">
                 Stay ahead of the Competition! Get Real-Time Leads of Investors Nationally right to your Inbox or CRM's when they view a real-estate investment.
               </p>
               
