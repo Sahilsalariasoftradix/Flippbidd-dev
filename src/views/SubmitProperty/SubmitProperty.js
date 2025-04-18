@@ -171,7 +171,7 @@ const SubmitProperty = () => {
       if (uploadedImages.length > 0) {
         uploadedImages.forEach((img, index) => {
           console.log('Appending image:', img.file.name); // Debug log
-          formData.append('profile_pic[]', img.file);
+          formData.append('property_pic[]', img.file);
         });
       }
 
@@ -724,7 +724,7 @@ const SubmitProperty = () => {
                                 <input
                                   type="file"
                                   id="property-images"
-                                  name="profile_pic[]"
+                                  name="property_pic[]"
                                   className="absolute inset-0 w-0 h-0 opacity-0 overflow-hidden"
                                   accept="image/*"
                                   multiple
