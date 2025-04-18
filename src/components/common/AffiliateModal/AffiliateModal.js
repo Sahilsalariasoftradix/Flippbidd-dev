@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Modal from '../Modal/Modal';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
@@ -7,6 +7,8 @@ import { IMAGES } from '../../../utils/constants';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import axios from 'axios';
+import toast from 'react-hot-toast';
 
 const affiliateSchema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -19,7 +21,7 @@ const affiliateSchema = z.object({
   note: z.string().min(1, 'Note is required'),
   socialMediaLinks: z.array(
     z.object({
-      url: z.string().min(1, 'Social media URL is required')
+      url: z.string().min(1, 'Social media URL is required').max(255, 'Social media URL must be less than 255 characters')
     })
   )
 });
@@ -61,10 +63,41 @@ const AffiliateModal = ({ isOpen, onClose }) => {
       append({ url: '' });
     }
   };
+  const [isLoading, setIsLoading] = useState(false);
+console.log(errors)
+  const onSubmit = async (data) => {
+    setIsLoading(true);
+    try {
+      // Format social media links array
+      const socialLinks = data.socialMediaLinks.map(link => link.url).filter(url => url !== '');
 
-  const onSubmit = (data) => {
-    console.log(data);
-    onClose();
+      const payload = {
+        fullName: data.name,
+        companyname: data.companyName,
+        email: data.email,
+        phone: data.phone,
+        profession: data.profession,
+        followers_count: data.followersCount,
+        referralsource: data.referralName,
+        code: '', // Since there's no code field in the form
+        social_links: socialLinks,
+        note: data.note
+      };
+
+      const response = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}/affiliated/submit`,
+        payload
+      );
+
+      if (response.data) {
+        toast.success("Affiliate request submitted successfully!");
+        onClose();
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to submit affiliate request. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   // Profession options for the dropdown
@@ -264,8 +297,8 @@ const AffiliateModal = ({ isOpen, onClose }) => {
           </div>
 
           <div className="form-submit">
-            <button type="submit" className="submit-button !w-[40%]">
-              Submit Request
+            <button type="submit" className={`submit-button !w-[40%] ${isLoading ? ' loading' : ''}`}>
+            Submit Request
             </button>
           </div>
         </form>

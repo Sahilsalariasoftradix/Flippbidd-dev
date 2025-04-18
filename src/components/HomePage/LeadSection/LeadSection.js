@@ -26,7 +26,7 @@ const LeadSection = () => {
         </div>
         
         <div className="text-center">
-          <a href="javascript:void(0)" className="btn-gradient">Click Here</a>
+          <button className="btn-gradient">Click Here</button>
         </div>
       </div>
     </section>

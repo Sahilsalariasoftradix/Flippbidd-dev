@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Modal from '../Modal/Modal';
 import PhoneInput from 'react-phone-input-2';
 import DatePicker from 'react-datepicker';
@@ -9,6 +9,8 @@ import { IMAGES } from '../../../utils/constants';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import axios from 'axios';
+import toast from 'react-hot-toast';
 
 // Define validation schema
 const formSchema = z.object({
@@ -32,12 +34,15 @@ const formSchema = z.object({
 });
 
 const VerifiedInvestorModal = ({ isOpen, onClose }) => {
+  const [isLoading, setIsLoading] = useState(false);
+
   const {
     register,
     handleSubmit,
     setValue,
     formState: { errors },
     watch,
+    reset,
     control
   } = useForm({
     resolver: zodResolver(formSchema),
@@ -70,9 +75,43 @@ const VerifiedInvestorModal = ({ isOpen, onClose }) => {
     }
   };
 
-  const onSubmit = (data) => {
-    console.log(data);
-    onClose();
+  const onSubmit = async (data) => {
+    setIsLoading(true);
+    try {
+      // Format social media links array
+      const socialLinks = data.socialMediaLinks.map(link => link.url).filter(url => url !== '');
+
+      const payload = {
+        fullName: data.name,
+        companyname: data.companyName,
+        email: data.email,
+        phone: data.phone,
+        social_links: socialLinks,
+        address: data.propertyAddress,
+        transaction_date: data.transactionDate,
+        purchase_price: data.purchasePrice,
+        sold_price: data.soldPrice,
+        area_of_interest: data.areasOfInterest,
+        note: data.aboutYourself,
+        profession: data.profession,
+        referralsource: data.referralName
+      };
+
+      const response = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}/verified_investor/submit`,
+        payload
+      );
+
+      if (response.data) {
+        toast.success("Verified investor request submitted successfully!");
+        onClose();
+        reset();
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to submit verified investor request. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   // Profession options for the dropdown
@@ -296,7 +335,7 @@ const VerifiedInvestorModal = ({ isOpen, onClose }) => {
                 <img src="/images/png/money-dollar-circle-fill.png" alt="Purchase Price" className="icon" />
               </label>
               <input
-                type="text"
+                type="number"
                 id="purchasePrice"
                 placeholder="Enter Purchase Price"
                 className={`${errors.purchasePrice ? '!border-red-500' : ''}`}
@@ -315,7 +354,7 @@ const VerifiedInvestorModal = ({ isOpen, onClose }) => {
                 <img src="/images/png/price-tag-3-fill.png" alt="Sold Price" className="icon" />
               </label>
               <input
-                type="text"
+                type="number"
                 id="soldPrice"
                 placeholder="Enter Sold Price"
                 className={`${errors.soldPrice ? '!border-red-500' : ''}`}
@@ -361,8 +400,12 @@ const VerifiedInvestorModal = ({ isOpen, onClose }) => {
           </div>
 
           <div className="form-submit">
-            <button type="submit" className="submit-button">
-              Submit Request
+            <button 
+              type="submit" 
+              className={`submit-button ${isLoading ? 'loading' : ''}`}
+              disabled={isLoading}
+            >
+              {isLoading ? 'Sending...' : 'Submit Request'}
             </button>
           </div>
         </form>
