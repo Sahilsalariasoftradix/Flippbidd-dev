@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import './Modal.css';
+import { IMAGES } from '../../../utils/constants';
 
 const Modal = ({ isOpen, onClose, children, className }) => {
   useEffect(() => {
@@ -24,7 +25,7 @@ const Modal = ({ isOpen, onClose, children, className }) => {
         onClick={(e) => e.stopPropagation()}
       >
         <button className="modal-close-btn" onClick={onClose}>
-          &times;
+        <img src={IMAGES.CLOSE_ICON} className='h-[14px] w-[14px]' alt="close" />
         </button>
         <div className="modal-content">
           {children}

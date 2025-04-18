@@ -25,14 +25,14 @@
 .hero-content {
   position: relative;
   z-index: 2;
-  max-width: 800px;
+  width: 800px;
   margin: 0;
   padding-left: var(--page-margin-desktop);
 }
 
 .hero-title {
-  font-size: 2.5rem;
-  font-weight: bold;
+  font-size: 46px;
+  font-weight: 600;
   margin-bottom: 30px;
   line-height: 1.2;
   text-align: left;
@@ -109,16 +109,32 @@
 
 .download-section {
   position: absolute;
-  bottom: 80px;
+  bottom: 0;
   left: 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  padding-top: 40px;
+    padding-bottom: 40px;
+    background: #0000004D;
+
+    backdrop-filter: blur(6px);
+
   width: 100%;
   padding-left: var(--page-margin-desktop);
   padding-right: var(--page-margin-desktop);
   z-index: 2;
 }
+.download-text::before {
+  content: "";
+  background: #FFFFFF2E;
+  width: 500px;
+  position: absolute;
+  height: 1px;
+  right: 33%;
+  top: 50%;
+}
+
 
 .download-text {
   font-size: 32px;
@@ -152,8 +168,8 @@
 
 .video-call-container {
   position: absolute;
-  top: 100px;
-  right: 80px;
+  top: 40px;
+  right:40px;
   z-index: 2;
 }
 

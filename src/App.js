@@ -7,11 +7,13 @@ import SevenDayTrial from './views/SevenDayTrial/SevenDayTrial';
 import SubmitProperty from './views/SubmitProperty/SubmitProperty';
 import Header from './components/common/Header/Header';
 import Footer from './components/common/Footer/Footer';
+import { Toaster } from 'react-hot-toast';
 
 function App() {
   return (
     <Router>
       <div className="App">
+      <Toaster />
         <Header />
         <Routes>  
           <Route path="/" element={<HomePage />} />

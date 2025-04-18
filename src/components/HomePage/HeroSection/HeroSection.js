@@ -67,7 +67,9 @@ const HeroSection = () => {
       <div className="overlay"></div>
       
       <div className="video-call-container">
+        <a href={process.env.REACT_APP_FLIPPBID_CALENDLY_URL} target='_blank' rel="noopener noreferrer">
         <img src={getImageUrl(IMAGES.VIDEO_CALL_BG)} alt="Video Call" className="video-call-image" />
+        </a>
       </div>
       
       <div className="container">

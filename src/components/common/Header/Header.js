@@ -74,14 +74,14 @@ const Header = () => {
                 </Link>
               </li>
               <li className="nav-item demo-btn-container mobile-only">
-                <Link to="#" className="btn demo-btn">Book a Demo</Link>
+                <a href={process.env.REACT_APP_FLIPPBID_CALENDLY_URL} target='_blank' rel="noopener noreferrer" className="btn demo-btn">Book a Demo</a>
               </li>
               <li className="mobile-auth-container">
                 <div className="nav-item auth-btn-container mobile-only">
-                  <Link to="#" className="btn btn-primary-gradient">Sign Up</Link>
+                  <a href={process.env.REACT_APP_FLIPPBIDD_SIGNUP_URL} target='_blank' rel="noopener noreferrer" className="btn btn-primary-gradient">Sign Up</a>
                 </div>
                 <div className="nav-item auth-btn-container mobile-only">
-                  <Link to="#" className="btn btn-primary-gradient">Log In</Link>
+                  <a href={process.env.REACT_APP_FLIPPBIDD_LOGIN_URL} target='_blank' rel="noopener noreferrer" className="btn btn-primary-gradient">Log In</a>
                 </div>
               </li>
             </ul>
@@ -89,13 +89,13 @@ const Header = () => {
           
           <div className="header-buttons">
             <div className="demo-btn-container desktop-only">
-              <Link to="#" className="btn demo-btn">Book a Demo</Link>
+              <a href={process.env.REACT_APP_FLIPPBID_CALENDLY_URL} target='_blank' rel="noopener noreferrer" className="btn demo-btn">Book a Demo</a>
             </div>
             <div className="auth-buttons desktop-only">
-              <Link to="#" className="btn btn-primary-gradient">Sign Up</Link>
+              <a href={process.env.REACT_APP_FLIPPBIDD_SIGNUP_URL} target='_blank' rel="noopener noreferrer" className="btn btn-primary-gradient">Sign Up</a>
             </div>
             <div className="auth-buttons desktop-only">
-              <Link to="#" className="btn btn-primary-gradient">Log In</Link>
+              <a href={process.env.REACT_APP_FLIPPBIDD_LOGIN_URL} target='_blank' rel="noopener noreferrer" className="btn btn-primary-gradient">Log In</a>
             </div>
             
             {showMenuToggle && (

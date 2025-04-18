@@ -1,11 +1,15 @@
 import React, { useState } from "react";
 import "./SubmitProperty.css";
 import { IMAGES } from "../../utils/constants";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import PhoneInput from "react-phone-input-2";
+import { useLoadScript, StandaloneSearchBox } from '@react-google-maps/api';
+import toast from "react-hot-toast";
+
+const libraries = ['places'];
 
 // Define the FeatureListItem component
 const FeatureListItem = ({ imageSrc, text }) => (
@@ -19,13 +23,38 @@ const SubmitProperty = () => {
   const [currentView, setCurrentView] = useState("sellerInfo");
   const [sellerData, setSellerData] = useState(null);
   const [uploadedImages, setUploadedImages] = useState([]);
+  const [address, setAddress] = useState("");
+  const [searchBox, setSearchBox] = useState(null);
+
+  const { isLoaded, loadError } = useLoadScript({
+    googleMapsApiKey: process.env.REACT_APP_GOOGLE_API_KEY,
+    libraries,
+  });
+
+  const onLoad = (ref) => {
+    setSearchBox(ref);
+  };
+
+  const onPlacesChanged = () => {
+    if (searchBox) {
+      const places = searchBox.getPlaces();
+      if (places && places.length > 0) {
+        const place = places[0];
+        setAddress(place.formatted_address);
+        setValue("propertyAddress", place.formatted_address, {
+          shouldValidate: true,
+          shouldDirty: true
+        });
+      }
+    }
+  };
 
   // Define Zod schemas for validation
   const sellerInfoSchema = z.object({
     sellerName: z.string().min(1, { message: "Seller Name is required" }),
     companyName: z.string().min(1, { message: "Company Name is required" }),
     email: z.string().email({ message: "Invalid email address" }),
-    phone: z.string().min(1, { message: "Phone number is required" }),
+    phone: z.string().optional(),
   });
 
   const propertyInfoSchema = z.object({
@@ -48,6 +77,7 @@ const SubmitProperty = () => {
     handleSubmit: handleSubmitSeller,
     formState: { errors: sellerErrors },
     reset: resetSellerForm,
+    setValue,
   } = useForm({
     resolver: zodResolver(sellerInfoSchema),
     defaultValues: sellerData || {
@@ -77,7 +107,7 @@ const SubmitProperty = () => {
       assetType: "",
     },
   });
-
+  const [phone, setPhone] = useState("");
   const onSellerInfoSubmit = (data) => {
     // Store seller data separately
     setSellerData(data);
@@ -93,19 +123,83 @@ const SubmitProperty = () => {
     setCurrentView("sellerInfo");
   };
 
-  const onPropertyInfoSubmit = (data) => {
-    // Here you can use both sellerData and property data
-    const completeFormData = {
-      ...sellerData,
-      ...data,
-    };
+  const onPropertyInfoSubmit = async (data) => {
+    try {
+      // Create FormData object
+      const formData = new FormData();
 
-    // You can log or send the complete data to your API
-    console.log("Complete form data:", completeFormData);
+      // Add seller info
+      formData.append('seller_name', sellerData.sellerName);
+      formData.append('company_name', sellerData.companyName);
+      formData.append('email', sellerData.email);
+      
+      // Split phone into country code and number
+      const phoneNumber = sellerData.phone;
+      const countryCode = phoneNumber.substring(0, phoneNumber.length - 10);
+      const mobileNumber = phoneNumber.substring(phoneNumber.length - 10);
+      
+      formData.append('country_code', countryCode);
+      formData.append('mobile_number', mobileNumber);
 
-    toast.success("Form submitted successfully!");
-    resetPropertyForm();
-    setCurrentView("sellerInfo");
+      // Add property info
+      formData.append('address', data.propertyAddress);
+      formData.append('gallery_link', data.cloudLink || '');
+      formData.append('price', data.propertyPrice);
+      formData.append('asset_type', data.assetType);
+      formData.append('sale_type', data.saleType);
+      formData.append('no_of_beds', data.beds);
+      formData.append('no_of_baths', data.baths);
+      formData.append('propery_area', data.totalSqFt);
+      
+      // Add static values
+      formData.append('is_available_to_sell', '1');
+      formData.append('token', 'STATIC_TOKEN_yyu673gb@!hjhxz@jjkah76wyggg378gyggmkjjd12sds@!knl');
+
+      // Get lat/lng from the Places API result
+      if (searchBox) {
+        const places = searchBox.getPlaces();
+        if (places && places.length > 0) {
+          const place = places[0];
+          const lat = place.geometry.location.lat();
+          const lng = place.geometry.location.lng();
+          formData.append('lat', lat.toString());
+          formData.append('lang', lng.toString());
+        }
+      }
+
+      // Add images if any
+      if (uploadedImages.length > 0) {
+        uploadedImages.forEach((img, index) => {
+          console.log('Appending image:', img.file.name); // Debug log
+          formData.append('profile_pic[]', img.file);
+        });
+      }
+
+      // Log FormData contents for debugging
+      for (let pair of formData.entries()) {
+        console.log(pair[0] + ': ' + pair[1]);
+      }
+
+      // Make API call
+      const response = await fetch(process.env.REACT_APP_CREATE_PROPERTY_URL, {
+        method: 'POST',
+        body: formData,
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        toast.success("Property submitted successfully!");
+        resetPropertyForm();
+        setCurrentView("sellerInfo");
+        setUploadedImages([]);
+      } else {
+        toast.error(result.message || "Failed to submit property");
+      }
+    } catch (error) {
+      console.error('Error submitting property:', error);
+      toast.error("Failed to submit property. Please try again.");
+    }
   };
 
   const handleIntegerInput = (e) => {
@@ -123,10 +217,16 @@ const SubmitProperty = () => {
       return;
     }
 
-    const newImages = files.map((file) => ({
-      file,
-      preview: URL.createObjectURL(file),
-    }));
+    // Log the files being processed
+    console.log('Files selected:', files.map(f => f.name));
+
+    const newImages = files.map((file) => {
+      console.log('Processing file:', file.name, 'Type:', file.type); // Debug log
+      return {
+        file,
+        preview: URL.createObjectURL(file)
+      };
+    });
 
     setUploadedImages([...uploadedImages, ...newImages]);
   };
@@ -138,6 +238,14 @@ const SubmitProperty = () => {
     newImages.splice(index, 1);
     setUploadedImages(newImages);
   };
+
+  if (loadError) {
+    return <div>Error loading maps</div>;
+  }
+
+  if (!isLoaded) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div
@@ -261,7 +369,7 @@ const SubmitProperty = () => {
                               />
                             </label>
                             <input
-                              type="email"
+                              type="text"
                               className={`form-control ${
                                 sellerErrors.email ? "!border-red-500" : ""
                               }`}
@@ -274,19 +382,21 @@ const SubmitProperty = () => {
                               {sellerErrors.email.message}
                             </div>
                           )}
-                          <div className="form-group">
-                            <label>
-                              <i className="fas fa-phone-alt"></i>
-                            </label>
-                            <input
-                              type="tel"
-                              className={`form-control ${
-                                sellerErrors.phone ? "!border-red-500" : ""
-                              }`}
-                              placeholder="Phone"
-                              {...registerSeller("phone")}
-                            />
-                          </div>
+                              <div className="phone-input-container">
+                <PhoneInput
+                  country={"us"}
+                  value={phone}
+                  onChange={(value) => {
+                    setPhone(value);
+                    setValue("phone", value);
+                  }}
+                  containerClass={`phone-input-wrapper`}
+                  inputClass={` ${sellerErrors.phone ? "!border-red-500" : ""} phone-input-field`}
+                  buttonClass="country-dropdown"
+                  placeholder="Phone"
+                  dropdownClass="country-dropdown-list"
+                />
+              </div>
                           {sellerErrors.phone && (
                             <div className="text-red-500 mt-[-10px] mb-[5px] text-[13px] ">
                               {sellerErrors.phone.message}
@@ -316,16 +426,31 @@ const SubmitProperty = () => {
                                 style={{ width: "20px", height: "20px" }}
                               />
                             </label>
-                            <input
-                              type="text"
-                              className={`form-control ${
-                                propertyErrors.propertyAddress
-                                  ? "!border-red-500"
-                                  : ""
-                              }`}
-                              placeholder="Enter Your Property Address"
-                              {...registerProperty("propertyAddress")}
-                            />
+                            <div className="w-full">
+                              <StandaloneSearchBox
+                                onLoad={onLoad}
+                                onPlacesChanged={onPlacesChanged}
+                              >
+                                <input
+                                  type="text"
+                                  className={`form-control ${
+                                    propertyErrors.propertyAddress
+                                      ? "!border-red-500"
+                                      : ""
+                                  }`}
+                                  placeholder="Enter Your Property Address"
+                                  {...registerProperty("propertyAddress")}
+                                  value={address}
+                                  onChange={(e) => {
+                                    setAddress(e.target.value);
+                                    setValue("propertyAddress", e.target.value, { 
+                                      shouldValidate: true,
+                                      shouldDirty: true 
+                                    });
+                                  }}
+                                />
+                              </StandaloneSearchBox>
+                            </div>
                           </div>
                           {propertyErrors.propertyAddress && (
                             <div className="text-red-500 mt-[-10px] mb-[5px] text-[13px] ">
@@ -371,14 +496,36 @@ const SubmitProperty = () => {
                                   }`}
                                   {...registerProperty("saleType")}
                                 >
-                                  <option value="">Select Sale Type</option>
-                                  <option>Contract Assignment</option>
-                                  <option>Note</option>
-                                  <option>REO</option>
-                                  <option>Short Sale</option>
-                                  <option>Straight Deal</option>
-                                  <option>Subject To</option>
-                                  <option>Wholesale</option>
+                                  <option selected value="">
+                                    Select Sale Type
+                                  </option>
+                                  <option
+                                    data-sale_type="Contract Assignment"
+                                    value="6"
+                                  >
+                                    Contract Assignment
+                                  </option>
+                                  <option data-sale_type="Note" value="4">
+                                    Note
+                                  </option>
+                                  <option data-sale_type="REO" value="3">
+                                    REO
+                                  </option>
+                                  <option data-sale_type="Short Sale" value="2">
+                                    Short Sale
+                                  </option>
+                                  <option
+                                    data-sale_type="Straight Deal"
+                                    value="1"
+                                  >
+                                    Straight Deal
+                                  </option>
+                                  <option data-sale_type="Subject To" value="5">
+                                    Subject To
+                                  </option>
+                                  <option data-sale_type="Wholesale" value="7">
+                                    Wholesale
+                                  </option>
                                 </select>
                               </div>
                               {propertyErrors.saleType && (
@@ -510,13 +657,57 @@ const SubmitProperty = () => {
                                   }`}
                                   {...registerProperty("assetType")}
                                 >
-                                  <option value="">Select Asset Type</option>
-                                  <option>Single Family</option>
-                                  <option>Multi Family</option>
-                                  <option>Commercial</option>
-                                  <option>Development</option>
-                                  <option>Land</option>
-                                  <option>Other</option>
+                                  <option selected value="">
+                                    Select Asset Type
+                                  </option>
+                                  <option
+                                    data-asset_type="Single Family"
+                                    value="4"
+                                  >
+                                    Single Family
+                                  </option>
+                                  <option
+                                    data-asset_type="Multi Family"
+                                    value="6"
+                                  >
+                                    Multi Family
+                                  </option>
+                                  <option data-asset_type="Mixed Use" value="7">
+                                    Mixed Use
+                                  </option>
+                                  <option
+                                    data-asset_type="Commercial"
+                                    value="8"
+                                  >
+                                    Commercial
+                                  </option>
+                                  <option data-asset_type="Land" value="9">
+                                    Land
+                                  </option>
+                                  <option data-asset_type="Other" value="11">
+                                    Other
+                                  </option>
+                                  <option
+                                    data-asset_type="Development"
+                                    value="12"
+                                  >
+                                    Development
+                                  </option>
+                                  <option data-asset_type="Note" value="26">
+                                    Note
+                                  </option>
+                                  <option data-asset_type="SFR" value="28">
+                                    SFR
+                                  </option>
+                                  <option data-asset_type="MFR" value="29">
+                                    MFR
+                                  </option>
+                                  <option data-asset_type="CONDO" value="30">
+                                    CONDO
+                                  </option>
+                                  <option data-asset_type="MOBILE" value="31">
+                                    MOBILE
+                                  </option>
                                 </select>
                               </div>
                               {propertyErrors.assetType && (
@@ -533,11 +724,11 @@ const SubmitProperty = () => {
                                 <input
                                   type="file"
                                   id="property-images"
+                                  name="profile_pic[]"
                                   className="absolute inset-0 w-0 h-0 opacity-0 overflow-hidden"
                                   accept="image/*"
                                   multiple
                                   onChange={handleFileChange}
-                                  {...registerProperty("propertyImages")}
                                 />
                                 <label
                                   htmlFor="property-images"
@@ -617,7 +808,6 @@ const SubmitProperty = () => {
             </div>
           </div>
         </div>
-        <ToastContainer />
       </div>
     </div>
   );

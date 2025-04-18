@@ -48,6 +48,7 @@ export const IMAGES = {
   TRIAL_CHECKBOX: '/images/png/seven_day_trial_checkbox_ic.png',
   SEVEN_DAY_DUMMY_HOME_BG: '/images/png/seven_day_dummy_home_bg.png',
   SEVEN_DAY_FREE_TRIAL_BG: '/images/png/free_trail_package_image.png',
+  CLOSE_ICON: '/images/svg/Close.svg',
   // Submit Property Images
   SEARCH_PROPERTY_BG: '/images/png/search_home_bg.png',
   SUBMIT_PROPERTY_BG: '/images/png/submit_propery_bg.png',
@@ -77,7 +78,7 @@ export const TEXT = {
   APP_NAME: 'FlippBidd',
   TAGLINE: 'Enter Address and get FREE Sales Comps & ARVs Instantly!',
   FREE_DOWNLOAD: 'Free to Download and Use',
-  EXPOSURE_TITLE: 'GET ADDITIONAL EXPOSURE TO REAL ESTATE INVESTORS',
+  EXPOSURE_TITLE: 'GET NATIONAL EXPOSURE TO REAL ESTATE INVESTORS',
   FEATURES_TITLE: 'FlippBidd Key Features',
   POLYGON_TITLE: 'Polygon Lead Search',
 };

@@ -52,7 +52,7 @@ const PricingSection = () => {
         'WebApp + Mobile Device Access',
         '100 Property Reports',
         'FlippBidd Leads',
-        '150 SkipTraces/Month'
+        '100 SkipTraces/Month'
       ]
     },
     {
@@ -62,7 +62,7 @@ const PricingSection = () => {
       featured: false,
       trial: false,
       features: [
-        'WebApp Package + Mobile Device Access',
+        'WebApp Package ',
         'Virtual Tours w/ RSVP Reminders',
         '500 Property Reports',
         '200 SkipTraces/Month'

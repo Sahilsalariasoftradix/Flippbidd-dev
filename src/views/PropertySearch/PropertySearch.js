@@ -6,6 +6,11 @@ import "react-phone-input-2/lib/style.css";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import axios from "axios";
+import toast from "react-hot-toast";
+import { useLoadScript, StandaloneSearchBox } from '@react-google-maps/api';
+
+const libraries = ['places'];
 
 // Define validation schema
 const propertySearchSchema = z.object({
@@ -33,18 +38,23 @@ const getProfessionsData = () => {
 };
 
 const PropertySearch = () => {
-  const [toast, setToast] = useState({ visible: false, message: "", type: "" });
-  // const [profession, setProfession] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
-  console.log(address)
+  const [searchBox, setSearchBox] = useState(null);
   const professions = getProfessionsData();
+
+  const { isLoaded, loadError } = useLoadScript({
+    googleMapsApiKey: process.env.REACT_APP_GOOGLE_API_KEY,
+    libraries,
+  });
 
   // Setup React Hook Form
   const {
     register,
     handleSubmit,
     setValue,
+    reset,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(propertySearchSchema),
@@ -57,6 +67,21 @@ const PropertySearch = () => {
     },
   });
 
+  const onLoad = (ref) => {
+    setSearchBox(ref);
+  };
+
+  const onPlacesChanged = () => {
+    if (searchBox) {
+      const places = searchBox.getPlaces();
+      if (places && places.length > 0) {
+        const place = places[0];
+        setAddress(place.formatted_address);
+        setValue("address", place.formatted_address);
+      }
+    }
+  };
+
   // Get the search address from localStorage if available
   useEffect(() => {
     const searchAddress = localStorage.getItem("searchAddress");
@@ -68,39 +93,52 @@ const PropertySearch = () => {
     }
   }, [setValue]);
 
-  useEffect(() => {
-    if (toast.visible) {
-      const timer = setTimeout(() => {
-        setToast({ ...toast, visible: false });
-      }, 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [toast]);
+  const onSubmit = async (data) => {
+    try {
+      setIsLoading(true);
 
-  const onSubmit = (data) => {
-    // Form is already validated by React Hook Form
-    setToast({
-      visible: true,
-      message: "Form submitted successfully!",
-      type: "success",
-    });
-    console.log("Form data:", data);
+      const payload = {
+        fullname: data.fullName,
+        email: data.email,
+        phone: data.phone,
+        profession: data.profession,
+        address: data.address,
+      };
+
+      const response = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}/getcomps/property`,
+        payload
+      );
+
+      if (response.data) {
+        if(response.data.success === true){
+          toast.success("Property data submitted successfully! We'll contact you soon.");
+        }else{
+          toast.error(response.data.message);
+        }
+        reset(); // Reset form
+        setPhone(""); // Reset phone input value
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to submit property data. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
+  if (loadError) {
+    return <div>Error loading maps</div>;
+  }
+
+  if (!isLoaded) {
+    return <div>Loading...</div>;
+  }
+
   return (
-    <div className="property-search ">
-      {toast.visible && (
-        <div
-          className={`toast-notification ${toast.type} ${
-            toast.visible ? "show" : ""
-          }`}
-        >
-          {toast.message}
-        </div>
-      )}
+    <div className="property-search">
       <img
         src={IMAGES.SEARCH_PROPERTY_BG}
-        alt="Property Seaerch"
+        alt="Property Search"
         style={{
           width: "100%",
           height: "100%",
@@ -153,45 +191,57 @@ const PropertySearch = () => {
           <div className="non-editable">
             <h2>Request Property Values</h2>
             <form onSubmit={handleSubmit(onSubmit)}>
-              <div className="input-group">
+              <div className={`input-group ${errors.address ? "!border-red-500" : ""}`}>
                 <img src={IMAGES.GRADIENT_LOCATION} alt="location" />
-                <input
-                  {...register("address")}
-                  type="text"
-                  placeholder="Enter Property Address"
-                  className={errors.address ? "border-red-500" : ""}
-                />
+             <div className="w-full">
+             <StandaloneSearchBox
+           
+           onLoad={onLoad}
+           onPlacesChanged={onPlacesChanged}
+         >
+           <input
+             type="text"
+             placeholder="Enter Property Address"
+             className={`w-full ${errors.address ? "!border-red-500" : ""}`}
+             value={address}
+             onChange={(e) => {
+               setAddress(e.target.value);
+               setValue("address", e.target.value);
+             }}
+           />
+         </StandaloneSearchBox>
+             </div>
               </div>
               {errors.address && (
-                <p className="text-red-500 text-sm mt-[-5px] text-start">
+                <p className="text-red-500 !text-xs mt-[-5px] text-start">
                   {errors.address.message}
                 </p>
               )}
-              <div className="input-group">
+              <div className={`input-group ${errors.fullName ? "!border-red-500" : ""}`}>
                 <img src={IMAGES.GRADIENT_USER} alt="user" />
                 <input
                   {...register("fullName")}
                   type="text"
                   placeholder="Full Name"
-                  className={errors.fullName ? "border-red-500" : ""}
+                 
                 />
               </div>
               {errors.fullName && (
-                <p className="text-red-500 text-sm mt-[-5px] text-start">
+                <p className="text-red-500 !text-xs mt-[-5px] text-start">
                   {errors.fullName.message}
                 </p>
               )}
-              <div className="input-group">
+             <div className={`input-group ${errors.email ? "!border-red-500" : ""}`}>
                 <img src={IMAGES.GRADIENT_MAIL} alt="email" />
                 <input
                   {...register("email")}
                   type="email"
                   placeholder="Email"
-                  className={errors.email ? "border-red-500" : ""}
+                  className={errors.email ? "!border-red-500" : ""}
                 />
               </div>
               {errors.email && (
-                <p className="text-red-500 text-sm mt-[-5px] text-start">
+                <p className="text-red-500 !text-xs mt-[-5px] text-start">
                   {errors.email.message}
                 </p>
               )}
@@ -203,30 +253,23 @@ const PropertySearch = () => {
                     setPhone(value);
                     setValue("phone", value);
                   }}
-                  containerClass={`phone-input-wrapper ${
-                    errors.phone ? "border-red-500" : ""
-                  }`}
-                  inputClass="phone-input-field"
+                  containerClass={`phone-input-wrapper`}
+                  inputClass={` ${errors.phone ? "!border-red-500" : ""} phone-input-field`}
                   buttonClass="country-dropdown"
                   placeholder="Phone"
                   dropdownClass="country-dropdown-list"
                 />
               </div>
               {errors.phone && (
-                <p className="text-red-500 text-sm mt-[-5px] text-start">
+                <p className="text-red-500 !text-xs mt-[-5px] text-start">
                   {errors.phone.message}
                 </p>
               )}
-              <div className="input-group">
+             <div className={`input-group ${errors.profession ? "!border-red-500" : ""}`}>
                 <img src={IMAGES.GRADIENT_USER} alt="profession" />
                 <select
                   {...register("profession")}
-                  // value={profession}
-                  // onChange={(e) => {
-                  //   setProfession(e.target.value);
-                  //   setValue('profession', e.target.value);
-                  // }}
-                  className={errors.profession ? "border-red-500" : ""}
+                  className={errors.profession ? "!border-red-500" : ""}
                 >
                   <option value="">Select Profession</option>
                   {professions.map((prof) => (
@@ -237,7 +280,7 @@ const PropertySearch = () => {
                 </select>
               </div>
               {errors.profession && (
-                <p className="text-red-500 text-sm mt-[-5px] text-start">
+                <p className="text-red-500 !text-xs mt-[-5px] text-start">
                   {errors.profession.message}
                 </p>
               )}
@@ -245,7 +288,9 @@ const PropertySearch = () => {
                 FlippBidd will send you the ARV High Values, Average values and
                 Low values to your email.
               </p>
-              <button type="submit">Send Request</button>
+              <button type="submit"     className={isLoading ? 'loading' : ''} disabled={isLoading}>
+              Send Request
+              </button>
             </form>
           </div>
         </div>

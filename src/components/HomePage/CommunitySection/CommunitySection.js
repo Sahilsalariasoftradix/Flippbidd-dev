@@ -1,31 +1,45 @@
-import React from 'react';
-import { IMAGES } from '../../../utils/constants';
+import React, { useState } from 'react';
+import VideoModal from '../../common/VideoModal/VideoModal';
 import './CommunitySection.css';
 
 const CommunitySection = () => {
-  // Sample testimonials data
+  const [selectedVideo, setSelectedVideo] = useState(null);
+
+  // Sample testimonials data with YouTube video IDs
   const testimonials = [
     {
       id: 1,
-      image: IMAGES.DEMO_PROPERTY_BG,
+      videoId: 'rSuP0kUpUp4',
       title: 'Real Estate Wholesaling and Networking'
     },
     {
       id: 2,
-      image: IMAGES.DEMO_PROPERTY_BG,
+      videoId: 'UTex8-YvlDg',
       title: 'FlippBidd HOT $185M From Dec 2023'
     },
     {
       id: 3,
-      image: IMAGES.DEMO_PROPERTY_BG,
+      videoId: 'zVlH1-5_mOg',
       title: 'Real Estate Wholesaling and Networking'
     },
     {
       id: 4,
-      image: IMAGES.DEMO_PROPERTY_BG,
+      videoId: '5x0zx76UhmE',
       title: 'Real Estate Wholesaling and Networking'
     }
   ];
+
+  const handleVideoClick = (videoId) => {
+    setSelectedVideo(videoId);
+  };
+
+  const handleCloseVideo = () => {
+    setSelectedVideo(null);
+  };
+
+  const getYouTubeThumbnail = (videoId) => {
+    return `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+  };
 
   return (
     <section className="community-section">
@@ -40,9 +54,21 @@ const CommunitySection = () => {
 
         <div className="testimonial-grid">
           {testimonials.map((testimonial) => (
-            <div key={testimonial.id} className="testimonial-card">
+            <div 
+              key={testimonial.id} 
+              className="testimonial-card"
+              onClick={() => handleVideoClick(testimonial.videoId)}
+            >
               <div className="testimonial-image-container">
-                <img src={testimonial.image} alt={testimonial.title} className="testimonial-image" />
+                <img 
+                  src={getYouTubeThumbnail(testimonial.videoId)} 
+                  alt={testimonial.title} 
+                  className="testimonial-image"
+                  onError={(e) => {
+                    // Fallback to medium quality thumbnail if maxresdefault is not available
+                    e.target.src = `https://img.youtube.com/vi/${testimonial.videoId}/hqdefault.jpg`;
+                  }}
+                />
                 <div className="play-button">
                   <i className="fas fa-play"></i>
                 </div>
@@ -52,6 +78,12 @@ const CommunitySection = () => {
           ))}
         </div>
       </div>
+
+      <VideoModal 
+        isOpen={!!selectedVideo}
+        onClose={handleCloseVideo}
+        videoId={selectedVideo}
+      />
     </section>
   );
 };

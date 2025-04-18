@@ -1,9 +1,47 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import axios from 'axios';
 import { IMAGES, ROUTES } from '../../../utils/constants';
 import './Footer.css';
+import toast from 'react-hot-toast';
+
+const newsletterSchema = z.object({
+  email: z.string().email('Please enter a valid email address')
+});
 
 const Footer = () => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset
+  } = useForm({
+    resolver: zodResolver(newsletterSchema)
+  });
+  const [isLoading, setIsLoading] = useState(false);
+
+  const onSubmit = async (data) => {
+    setIsLoading(true);
+    try {
+      const response = await axios.post(`${process.env.REACT_APP_BASE_URL}/email/submit`, {
+        email: data.email
+      });
+      
+      if (response.status === 200) {
+        toast.success('Thank you for subscribing to our newsletter!');
+        reset();
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to subscribe. Please try again.');
+      console.error('Newsletter subscription error:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   // Use inline style for the background image
   const footerBackgroundStyle = {
     backgroundImage: `url(${process.env.PUBLIC_URL}${IMAGES.FOOTER_BG})`,
@@ -87,10 +125,20 @@ const Footer = () => {
 
             <div className="newsletter">
               <h3>Get our Weekly Email Updates</h3>
-              <div className="newsletter-form">
-                <input type="email" placeholder="Enter Your Email" />
-                <button type="submit">Send</button>
-              </div>
+              <form onSubmit={handleSubmit(onSubmit)} className="newsletter-form">
+                <input 
+                  type="email" 
+                  placeholder="Enter Your Email"
+                  className='!text-black'
+                  {...register('email')}
+                />
+                <button className={isLoading ? 'loading' : ''} type="submit">Send</button>
+              </form>
+                {errors.email && (
+                  <div className='text-red-500 text-xs -mt-4'>
+                    {errors.email.message}
+                  </div>
+                )}
               <div className="app-downloads">
                 <a target='_blank' href={process.env.REACT_APP_FLIPPBID_APPLE_STORE_URL} rel="noopener noreferrer" className="app-download-button" aria-label="Download on App Store">
                   <img src={`${process.env.PUBLIC_URL}${IMAGES.APPLE_STORE}`} alt="Download on App Store" />
@@ -105,10 +153,10 @@ const Footer = () => {
 
         <div className="footer-bottom">
           <div className="footer-bottom-left">
-            <p>© Copyright 2025 FlippBidd App</p>
+            <p>© Copyright {new Date().getFullYear()} FlippBidd App</p>
             <div className="footer-bottom-links">
               <Link to="#">Terms & Conditions</Link>
-              <Link to="#">Privacy policy</Link>
+              <Link to="#">Privacy Policy</Link>
             </div>
           </div>
           <div className="footer-bottom-right">

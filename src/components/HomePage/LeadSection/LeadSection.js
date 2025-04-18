@@ -11,7 +11,7 @@ const LeadSection = () => {
   return (
     <section className="lead-section">
       <div className="container">
-        <h2 className="section-title">{TEXT.EXPOSURE_TITLE}</h2>
+        <h2 className=" text-[24px] font-semibold mb-10 bg-gradient-to-r from-[#C830EB] via-[#00ACDB] to-[#00ACDB] inline-block text-transparent bg-clip-text">{TEXT.EXPOSURE_TITLE}</h2>
         
         <div className="lead-options">
           <div className="lead-option">
@@ -26,7 +26,7 @@ const LeadSection = () => {
         </div>
         
         <div className="text-center">
-          <a href="/" className="btn-gradient">Click Here</a>
+          <a href="javascript:void(0)" className="btn-gradient">Click Here</a>
         </div>
       </div>
     </section>

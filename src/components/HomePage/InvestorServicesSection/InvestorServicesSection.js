@@ -7,9 +7,9 @@ const InvestorServicesSection = () => {
     <section className="investor-services-section">
       <div className="container">
         <div className="section-header">
-          <h2 className="section-title">
-            <span className="title-primary">Real Investors,</span> <span className="title-secondary">Real Leads</span>
-            <div className="title-subtitle">in Real-Time</div>
+          <h2 className="text-[36px] font-semibold bg-gradient-to-r from-[#C830EB] via-[#00ACDB] to-[#00ACDB] inline-block text-transparent bg-clip-text">
+            <span >Real Investors,</span> <span >Real Leads</span>
+            <div >in Real-Time</div>
           </h2>
         </div>
         
