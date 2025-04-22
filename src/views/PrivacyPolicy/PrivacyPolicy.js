@@ -8,8 +8,8 @@ const PrivacyPolicy = () => {
     window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
   }, [location]);
   return (
-    <div className="prose mt-20 prose-slate lg:prose-lg mx-auto px-4 py-8">
-      <h1>Privacy Policy</h1>
+    <div className="prose mt-20 prose-slate text-justify lg:prose-lg mx-auto px-4 py-8">
+      <h1 className="text-center">Privacy Policy</h1>
       <p>
         <strong>Date of last effective update:</strong> May 17th, 2021
       </p>

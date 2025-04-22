@@ -8,8 +8,8 @@ export default function BillingTerms() {
     window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
   }, [location]);
   return (
-    <div className="prose mt-20 prose-slate lg:prose-lg mx-auto px-4 py-8">
-      <h1>FlippBidd Billing Terms &amp; Conditions</h1>
+    <div className="prose mt-20 prose-slate text-justify lg:prose-lg mx-auto px-4 py-8">
+      <h1 className="text-center">FlippBidd Billing Terms &amp; Conditions</h1>
       <p>
         <strong>Effective Date:</strong> Date of Customer Purchase and Sign Up
       </p>

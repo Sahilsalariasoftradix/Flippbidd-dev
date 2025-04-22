@@ -315,7 +315,7 @@ const PropertySearch = () => {
                 >
                   <option value="">Select Profession</option>
                   {professions.map((prof) => (
-                    <option key={prof.id} value={prof.id}>
+                    <option key={prof.id} value={prof.name}>
                       {prof.name}
                     </option>
                   ))}

@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-// import { Link } from "react-router-dom";
-import { IMAGES } from "../../../utils/constants";
+import { getDisplayArea, IMAGES } from "../../../utils/constants";
 import "./PropertiesSection.css";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -9,7 +8,6 @@ import { GoogleMap, StreetViewPanorama } from "@react-google-maps/api";
 const PropertiesSection = ({ isLoaded }) => {
   // Sample properties data - in a real app, this would come from an API
   const [properties, setProperties] = useState([]);
-  console.log(properties);
   const [loading, setLoading] = useState(true);
   // const [assetTypeList, setAssetTypeList] = useState([]);
   const [streetViewAvailable, setStreetViewAvailable] = useState(true);
@@ -102,7 +100,7 @@ const PropertiesSection = ({ isLoaded }) => {
         ) : (
           <div className="properties-grid">
             {properties.map((property) => {
-
+            
 
               return (
                 <a
@@ -112,10 +110,11 @@ const PropertiesSection = ({ isLoaded }) => {
                 >
                   <div className="property-card" key={property.common_id}>
                     <div
-                      className={`${property?.images?.length > 0
+                      className={`${
+                        property?.images?.length > 0
                           ? "property-image"
                           : "static-image property-image "
-                        }`}
+                      }`}
                     >
                       {property?.images?.length > 0 ? (
                         <img
@@ -210,8 +209,7 @@ const PropertiesSection = ({ isLoaded }) => {
                               marginRight: "5px",
                             }}
                           />
-                          {property.area ? property.area : property.bldgsize}{" "}
-                          {property.area_measure}
+                          {getDisplayArea(property)}
                         </span>
                       </div>
                       <div className="property-address">

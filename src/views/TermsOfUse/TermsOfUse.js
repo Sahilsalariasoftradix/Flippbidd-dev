@@ -8,8 +8,8 @@ const TermsOfUse = () => {
     window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
   }, [location]);
   return (
-    <div className="mt-20 prose prose-slate lg:prose-lg mx-auto px-4 py-8">
-      <h2>TERMS & CONDITIONS</h2>
+    <div className="mt-20 prose prose-slate text-justify lg:prose-lg mx-auto px-4 py-8">
+      <h2 className="text-center">TERMS & CONDITIONS</h2>
       <p>
         <strong>Date of last effective update:</strong> January 5, 2021.
       </p>

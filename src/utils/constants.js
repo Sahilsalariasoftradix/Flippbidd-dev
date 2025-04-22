@@ -11,6 +11,20 @@ export const COLORS = {
   GRADIENT_START: '#003F79',
   GRADIENT_END: '#00ACDB',
 };
+export const getDisplayArea = function(data) {
+  const area = data?.area;
+  const bldgSize = data?.bldgsize;
+
+  if (area === '0' && (bldgSize === '0' || !bldgSize)) {
+    return '0';
+  } else if (area && area !== '0' && area !== '') {
+    return area;
+  } else if (bldgSize && bldgSize !== '0' && bldgSize !== '') {
+    return bldgSize;
+  } else {
+    return 'N/A';
+  }
+};
 
 // Image Paths
 export const IMAGES = {
