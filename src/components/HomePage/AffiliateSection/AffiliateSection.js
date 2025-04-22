@@ -92,7 +92,7 @@ const AffiliateSection = () => {
                     <div>
                       <img src="/images/svg/mail_ic.svg" alt="Email" />
                     </div>
-                    <span>LetsNetwork@FlippBidd.com</span>
+                    <a href="mailto:LetsNetwork@FlippBidd.com">LetsNetwork@FlippBidd.com</a>
                   </a>
                 </div>
               </div>

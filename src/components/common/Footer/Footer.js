@@ -67,7 +67,7 @@ const Footer = () => {
           <div className="footer-logo-section">
             <div className="logo">
               <Link to={ROUTES.HOME}>
-                <img src={`${process.env.PUBLIC_URL}${IMAGES.LOGO}`} alt="FlippBidd Logo" className="logo-img" />
+                <img src={`${process.env.PUBLIC_URL}${IMAGES.FOOTER_LOGO}`} alt="FlippBidd Logo" className="logo-img" />
               </Link>
             </div>
             <p className="footer-description">
@@ -119,7 +119,7 @@ const Footer = () => {
               </div>
               <div className="contact-item">
                 <i className="fas fa-phone-alt"></i>
-                <p>+1 376-688-3295</p>
+                <a href="tel:+13766883295">+1 376-688-3295</a>
               </div>
             </div>
 

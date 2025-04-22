@@ -24,7 +24,7 @@ const InvestorServicesSection = () => {
               
               <div className="service-email">
                 <img src={IMAGES.GRADIENT_MAIL} alt="Email" className="email-icon" />
-                <span className='text-xs'>LetsNetwork@flippbidd.com</span>
+                <a href="mailto:LetsNetwork@flippbidd.com" className='text-xs'>LetsNetwork@flippbidd.com</a>
               </div>
             </div>
               
@@ -47,7 +47,7 @@ const InvestorServicesSection = () => {
               
               <div className="service-email">
                 <img src={IMAGES.GRADIENT_MAIL} alt="Email" className="email-icon" />
-                <span className='text-xs'>LetsNetwork@flippbidd.com</span>
+                <a href="mailto:LetsNetwork@flippbidd.com" className='text-xs'>LetsNetwork@flippbidd.com</a>
               </div>
             </div>
               

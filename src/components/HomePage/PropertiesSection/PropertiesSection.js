@@ -1,36 +1,36 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { IMAGES } from "../../../utils/constants";
 import "./PropertiesSection.css";
 import axios from "axios";
 import toast from "react-hot-toast";
+import {
+  GoogleMap,
+  StreetViewPanorama,
+} from "@react-google-maps/api";
 
-const PropertiesSection = () => {
+const PropertiesSection = ({isLoaded}) => {
   // Sample properties data - in a real app, this would come from an API
   const [properties, setProperties] = useState([]);
+  console.log(properties)
   const [loading, setLoading] = useState(true);
   // const [assetTypeList, setAssetTypeList] = useState([]);
+  const [streetViewAvailable, setStreetViewAvailable] = useState(true);
 
-  const getAssetTypeName = (property) => {
-    let assetTypeList = [];
-    const assetTypeId = property?.asset_type;
-    // Case 1: asset_type is present — find it in assetTypeList
-    if (assetTypeId) {
-      const matchingAsset = assetTypeList.find(
-        (type) => type?.common_id === assetTypeId
-      );
-      return matchingAsset?.common_name || "N/A";
+
+  const panoramaRef = useRef(null);
+
+  const handleStreetViewLoad = (pano) => {
+    panoramaRef.current = pano;
+
+    if (isLoaded && pano) {
+      pano.addListener("status_changed", () => {
+        const isEmpty = pano.getLinks()?.length === 0;
+        if (isEmpty) {
+          setStreetViewAvailable(false);
+        }
+      });
     }
-    // Case 2: asset_type is empty — check property_type
-    if (property?.property_type) {
-      return property.property_type;
-    }
-    // Case 3: property_type is empty — check house
-    if (property?.house) {
-      return property.house;
-    }
-    // Case 4: Everything is empty
-    return "N/A";
   };
 
   useEffect(() => {
@@ -46,7 +46,7 @@ const PropertiesSection = () => {
       try {
         const response = await axios.post(
           process.env.REACT_APP_FETCH_HOMEDATA_URL,
-          formData,
+          formData
           // {
           //   headers: {
           //     Cookie: "ci_session=c0s0m28kvkjnfokjp7f0qnovqthqb4tb", // Will be ignored in browser unless server sends cookie itself
@@ -105,26 +105,98 @@ const PropertiesSection = () => {
           </div>
         ) : (
           <div className="properties-grid">
-            {properties.map((property) => (
-              <a href={`https://webapp.flippbidd.com/property/property-detail/${property?.common_id} `} target="_blank" rel="noopener noreferrer">
-
+            {properties.map((property) => {
+                const getAssetTypeName = (property) => {
+                  let assetTypeList = [];
+                  const assetTypeId = property?.asset_type;
+                  // Case 1: asset_type is present — find it in assetTypeList
+                  if (assetTypeId) {
+                    const matchingAsset = assetTypeList.find(
+                      (type) => type?.common_id === assetTypeId
+                    );
+                    return matchingAsset?.common_name || "N/A";
+                  }
+                  // Case 2: asset_type is empty — check property_type
+                  if (property?.property_type) {
+                    return property.property_type;
+                  }
+                  // Case 3: property_type is empty — check house
+                  if (property?.house) {
+                    return property.house;
+                  }
+                  // Case 4: Everything is empty
+                  return "N/A";
+                };
+              
+              return (
+              <a
+                href={`https://webapp.flippbidd.com/property/property-detail/${property?.common_id} `}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <div className="property-card" key={property.common_id}>
                   <div className="property-image">
-                    <img
-                      src={
-                        property.images[0]?.image_name
-                          ? property.images[0]?.image_name
-                          : "https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM="
-                      }
-                      alt={property.type}
-                    />
+                    {property?.images?.length > 0 ? (
+                      <img
+                        src={
+                          property.images[0]?.image_name
+                            ? property.images[0]?.image_name
+                            : "https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM="
+                        }
+                        alt={property.type}
+                      />
+                    ) : isLoaded && streetViewAvailable ? (
+                      <div
+                        className={`rounded-top streetView`}
+                        style={{ height: "200px" }}
+                      >
+                        <GoogleMap
+                          mapContainerStyle={{ width: "100%", height: "100%" }}
+                          center={{
+                            lat: Number(property?.lat),
+                            lng: Number(property?.lang),
+                          }}
+                          zoom={14}
+                          options={{
+                            streetViewControl: false,
+                            fullscreenControl: false,
+                            disableDefaultUI: true,
+                          }}
+                        >
+                          <StreetViewPanorama
+                            onLoad={handleStreetViewLoad}
+                            options={{
+                              position: {
+                                lat: Number(property?.lat),
+                                lng: Number(property?.lang),
+                              },
+                              visible: true,
+                              pov: { heading: 100, pitch: 0 },
+                              zoom: 1,
+                              disableDefaultUI: true,
+                              zoomControl: false,
+                              showRoadLabels: false,
+                              addressControl: false,
+                              linksControl: false,
+                              panControl: false,
+                              fullscreenControl: false,
+                            }}
+                          />
+                        </GoogleMap>
+                      </div>
+                    ) : (
+                      <img
+                        src={IMAGES.FLIPPBIDD_PLACEHOLDER}
+                        alt={property.type}
+                      />
+                    )}
                   </div>
                   <div className="property-info">
                     <div className="property-category-wrapper">
                       <div className="property-category">
-                        {property.sale_type ? property.sale_type : "N/A"}
+                        {property?.sale_type ? property?.sale_type : "N/A"}
                       </div>
-                    </div>
+                    </div>  
                     <h3 className="property-title !mb-2">
                       {getAssetTypeName(property)}
                     </h3>
@@ -169,17 +241,19 @@ const PropertiesSection = () => {
                           marginTop: "2px",
                         }}
                       />
-                      {property?.address ?? "N/A"}
+                   <p className="truncate">
+                   {property?.address ?? "N/A"}
+                   </p>
                     </div>
                     <div className="property-actions">
-                      <a
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        href={`https://webapp.flippbidd.com/property/property-detail/${property?.common_id} `}
+                      <button
+                        // target="_blank"
+                        // rel="noopener noreferrer"
+                        // href={`https://webapp.flippbidd.com/property/property-detail/${property?.common_id} `}
                         className="view-details-btn"
                       >
                         View Details
-                      </a>
+                      </button>
                       <div className="property-price">
                         <img
                           src={getImageUrl(IMAGES.DOLLAR_ICON)}
@@ -197,7 +271,8 @@ const PropertiesSection = () => {
                   </div>
                 </div>
               </a>
-            ))}
+            );
+          })}
           </div>
         )}
 

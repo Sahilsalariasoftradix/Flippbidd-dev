@@ -15,6 +15,7 @@ export const COLORS = {
 // Image Paths
 export const IMAGES = {
   LOGO: '/images/png/logo_ic.png',
+  FOOTER_LOGO: '/images/svg/footer_logo_ic.svg',
   HOME_BG: '/images/png/home_img_bg.png',
   FEATURE_BG: '/images/png/flippbidd_key_feature_bg.png',
   POLYGON_BG: '/images/png/polygon-search.png',
@@ -71,6 +72,14 @@ export const IMAGES = {
   REFER_USER_ICON: '/images/svg/refer_user_ic.svg',
   FOLLOWERS_ICON: '/images/svg/followers_ic.svg',
   WRITE_NOTE_ICON: '/images/svg/write_note_ic.svg',
+  RECORD_ICON: '/images/svg/recorder.svg',
+  PLAY_ICON: '/images/svg/play.svg',
+  STOP_ICON: '/images/svg/stop.svg',
+  PLAY_RECORD_ICON: '/images/svg/recordPlay.svg',
+  DELETE_ICON: '/images/svg/dlt.svg',
+  STATIC_WAVES: '/images/svg/staticWaves.svg',
+  FLIPPBIDD_PLACEHOLDER: '/images/svg/PropertyPlaceholder.svg',
+
 };
 
 // Common Text

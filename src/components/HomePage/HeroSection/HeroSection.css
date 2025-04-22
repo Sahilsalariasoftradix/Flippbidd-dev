@@ -128,7 +128,7 @@
 .download-text::before {
   content: "";
   background: #FFFFFF2E;
-  width: 500px;
+  width: 420px;
   position: absolute;
   height: 1px;
   right: 33%;

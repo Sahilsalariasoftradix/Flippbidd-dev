@@ -8,16 +8,22 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { useLoadScript, StandaloneSearchBox } from '@react-google-maps/api';
+import { useLoadScript, StandaloneSearchBox } from "@react-google-maps/api";
 
-const libraries = ['places'];
+const libraries = ["places"];
 
 // Define validation schema
 const propertySearchSchema = z.object({
   address: z.string().min(1, "Property address is required"),
   fullName: z.string().min(1, "Full name is required"),
-  email: z.string().email("Invalid email address"),
-  phone: z.string().min(10, "Valid phone number is required"),
+  email: z
+    .string()
+    .min(1, { message: "Email is required." })
+    .email("This is not a valid email."),
+    phone: z
+    .string()
+    .nonempty("Phone number is required")
+    .min(7, "Phone number should be 7-15 digits"),
   profession: z.string().min(1, "Please select your profession"),
 });
 
@@ -42,6 +48,7 @@ const PropertySearch = () => {
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   const [searchBox, setSearchBox] = useState(null);
+  const [isValidGoogleAddress, setIsValidGoogleAddress] = useState(false);
   const professions = getProfessionsData();
 
   const { isLoaded, loadError } = useLoadScript({
@@ -77,7 +84,8 @@ const PropertySearch = () => {
       if (places && places.length > 0) {
         const place = places[0];
         setAddress(place.formatted_address);
-        setValue("address", place.formatted_address);
+        setValue("address", place.formatted_address, { shouldValidate: true });
+        setIsValidGoogleAddress(true);
       }
     }
   };
@@ -88,12 +96,18 @@ const PropertySearch = () => {
     if (searchAddress) {
       setAddress(searchAddress);
       setValue("address", searchAddress);
+      setIsValidGoogleAddress(true);
       // Clear the localStorage after using it
       localStorage.removeItem("searchAddress");
     }
   }, [setValue]);
 
   const onSubmit = async (data) => {
+    if (!isValidGoogleAddress) {
+      toast.error("Please select a valid address from the suggestions");
+      return;
+    }
+
     try {
       setIsLoading(true);
 
@@ -111,16 +125,23 @@ const PropertySearch = () => {
       );
 
       if (response.data) {
-        if(response.data.success === true){
-          toast.success("Property data submitted successfully! We'll contact you soon.");
-        }else{
+        if (response.data.success === true) {
+          toast.success(
+            "Property data submitted successfully! We'll contact you soon."
+          );
+          reset(); // Reset form
+          setPhone(""); // Reset phone input value
+          setAddress("");
+        } else {
           toast.error(response.data.message);
         }
-        reset(); // Reset form
-        setPhone(""); // Reset phone input value
+      
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to submit property data. Please try again.");
+      toast.error(
+        error.response?.data?.message ||
+          "Failed to submit property data. Please try again."
+      );
     } finally {
       setIsLoading(false);
     }
@@ -154,7 +175,7 @@ const PropertySearch = () => {
         }}
       />
 
-      <div className="container grid grid-cols-2 gap-20">
+      <div className="container grid grid-cols-2 gap-20 !mt-[100px]">
         <div className="non-editable">
           <div className="features-container !ml-0">
             <h1 className="get-free-title">GET FREE</h1>
@@ -191,39 +212,50 @@ const PropertySearch = () => {
           <div className="non-editable">
             <h2>Request Property Values</h2>
             <form onSubmit={handleSubmit(onSubmit)}>
-              <div className={`input-group ${errors.address ? "!border-red-500" : ""}`}>
+              <div
+                className={`input-group ${
+                  errors.address ? "!border-red-500" : ""
+                }`}
+              >
                 <img src={IMAGES.GRADIENT_LOCATION} alt="location" />
-             <div className="w-full">
-             <StandaloneSearchBox
-           
-           onLoad={onLoad}
-           onPlacesChanged={onPlacesChanged}
-         >
-           <input
-             type="text"
-             placeholder="Enter Property Address"
-             className={`w-full ${errors.address ? "!border-red-500" : ""}`}
-             value={address}
-             onChange={(e) => {
-               setAddress(e.target.value);
-               setValue("address", e.target.value);
-             }}
-           />
-         </StandaloneSearchBox>
-             </div>
+                <div className="w-full">
+                  <StandaloneSearchBox
+                    onLoad={onLoad}
+                    onPlacesChanged={onPlacesChanged}
+                  >
+                    <input
+                      type="text"
+                      placeholder="Enter Property Address"
+                      className={`w-full ${
+                        errors.address ? "!border-red-500" : ""
+                      }`}
+                      value={address}
+                      onChange={(e) => {
+                        setAddress(e.target.value);
+                        setValue("address", e.target.value, {
+                          shouldValidate: true,
+                        });
+                        setIsValidGoogleAddress(false);
+                      }}
+                    />
+                  </StandaloneSearchBox>
+                </div>
               </div>
               {errors.address && (
                 <p className="text-red-500 !text-xs mt-[-5px] text-start">
                   {errors.address.message}
                 </p>
               )}
-              <div className={`input-group ${errors.fullName ? "!border-red-500" : ""}`}>
+              <div
+                className={`input-group ${
+                  errors.fullName ? "!border-red-500" : ""
+                }`}
+              >
                 <img src={IMAGES.GRADIENT_USER} alt="user" />
                 <input
                   {...register("fullName")}
                   type="text"
                   placeholder="Full Name"
-                 
                 />
               </div>
               {errors.fullName && (
@@ -231,7 +263,11 @@ const PropertySearch = () => {
                   {errors.fullName.message}
                 </p>
               )}
-             <div className={`input-group ${errors.email ? "!border-red-500" : ""}`}>
+              <div
+                className={`input-group ${
+                  errors.email ? "!border-red-500" : ""
+                }`}
+              >
                 <img src={IMAGES.GRADIENT_MAIL} alt="email" />
                 <input
                   {...register("email")}
@@ -251,10 +287,12 @@ const PropertySearch = () => {
                   value={phone}
                   onChange={(value) => {
                     setPhone(value);
-                    setValue("phone", value);
+                    setValue("phone", value, { shouldValidate: true });
                   }}
                   containerClass={`phone-input-wrapper`}
-                  inputClass={` ${errors.phone ? "!border-red-500" : ""} phone-input-field`}
+                  inputClass={` ${
+                    errors.phone ? "!border-red-500" : ""
+                  } phone-input-field`}
                   buttonClass="country-dropdown"
                   placeholder="Phone"
                   dropdownClass="country-dropdown-list"
@@ -265,7 +303,11 @@ const PropertySearch = () => {
                   {errors.phone.message}
                 </p>
               )}
-             <div className={`input-group ${errors.profession ? "!border-red-500" : ""}`}>
+              <div
+                className={`input-group ${
+                  errors.profession ? "!border-red-500" : ""
+                }`}
+              >
                 <img src={IMAGES.GRADIENT_USER} alt="profession" />
                 <select
                   {...register("profession")}
@@ -288,8 +330,12 @@ const PropertySearch = () => {
                 FlippBidd will send you the ARV High Values, Average values and
                 Low values to your email.
               </p>
-              <button type="submit"     className={isLoading ? 'loading' : ''} disabled={isLoading}>
-              Send Request
+              <button
+                type="submit"
+                className={isLoading ? "loading" : ""}
+                disabled={isLoading}
+              >
+                Send Request
               </button>
             </form>
           </div>

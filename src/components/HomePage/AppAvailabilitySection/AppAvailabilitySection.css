@@ -22,12 +22,12 @@
 .app-availability-content {
   position: relative;
   z-index: 2;
-  max-width: 800px;
+  /* max-width: 800px; */
   margin: 0 auto;
 }
 
 .availability-title {
-  font-size: 42px;
+  font-size: 38px;
   font-weight: 700;
   margin-bottom: 15px;
 }

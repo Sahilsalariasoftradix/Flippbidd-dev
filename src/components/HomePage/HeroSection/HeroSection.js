@@ -1,21 +1,19 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { IMAGES, TEXT } from '../../../utils/constants';
-import { useLoadScript, StandaloneSearchBox } from '@react-google-maps/api';
+import {  StandaloneSearchBox } from '@react-google-maps/api';
 import './HeroSection.css';
 
-const libraries = ['places'];
 
-const HeroSection = () => {
+
+const HeroSection = ({isLoaded, loadError}) => {
   const [address, setAddress] = useState('');
   const [loading, setLoading] = useState(false);
   const [searchBox, setSearchBox] = useState(null);
+  const [validPlaceSelected, setValidPlaceSelected] = useState(false);
   const navigate = useNavigate();
 
-  const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: process.env.REACT_APP_GOOGLE_API_KEY,
-    libraries,
-  });
+ 
 
   const onLoad = (ref) => {
     setSearchBox(ref);
@@ -27,13 +25,14 @@ const HeroSection = () => {
       if (places && places.length > 0) {
         const place = places[0];
         setAddress(place.formatted_address);
+        setValidPlaceSelected(true);
       }
     }
   };
 
   const handleSearch = async (e) => {
     e.preventDefault();
-    if (!address.trim()) return;
+    if (!address.trim() || !validPlaceSelected) return;
 
     setLoading(true);
     try {
@@ -59,7 +58,7 @@ const HeroSection = () => {
   }
 
   if (!isLoaded) {
-    return <div>Loading...</div>;
+    return <div>Loading...</div>; 
   }
 
   return (
@@ -92,11 +91,18 @@ const HeroSection = () => {
                     placeholder="Search Property..."
                     className="search-input min-w-[300px]"
                     value={address}
-                    onChange={(e) => setAddress(e.target.value)}
+                    onChange={(e) => {
+                      setAddress(e.target.value);
+                      setValidPlaceSelected(false);
+                    }}
                   />
                 </StandaloneSearchBox>
               </div>
-                <button type="submit" className="search-button" disabled={loading}>
+                <button 
+                  type="submit" 
+                  className={`search-button ${!validPlaceSelected ? 'disabled' : ''}`} 
+                  disabled={loading || !validPlaceSelected}
+                >
                   Search
                 </button>
               </div>

@@ -14,7 +14,10 @@ const formSchema = z.object({
   fullName: z.string().min(1, "Full name is required"),
   companyName: z.string().optional(),
   email: z.string().email("Invalid email address"),
-  phone: z.string().min(10, "Phone number is required"),
+  phone: z
+  .string()
+  .nonempty("Phone number is required")
+  .min(7, "Phone number should be 7-15 digits"),
   profession: z.string().min(1, "Please select a profession"),
   referralName: z.string().optional(),
   referralCode: z.string().optional(),
@@ -56,7 +59,7 @@ const SevenDayTrial = () => {
   // Handle phone input changes
   const handlePhoneChange = (value) => {
     setPhoneValue(value);
-    setValue("phone", value);
+    setValue("phone", value, { shouldValidate: true });
   };
 
   // Professions list for dropdown
@@ -205,7 +208,7 @@ const SevenDayTrial = () => {
                     >
                       <option value="">Select Profession</option>
                       {professions.map((prof) => (
-                        <option key={prof.id} value={prof.id}>
+                        <option key={prof.id} value={prof.name}>
                           {prof.name}
                         </option>
                       ))}

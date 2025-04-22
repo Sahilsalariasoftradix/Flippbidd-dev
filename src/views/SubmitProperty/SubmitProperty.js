@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./SubmitProperty.css";
 import { IMAGES } from "../../utils/constants";
 
@@ -6,10 +6,11 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import PhoneInput from "react-phone-input-2";
-import { useLoadScript, StandaloneSearchBox } from '@react-google-maps/api';
+import { useLoadScript, StandaloneSearchBox } from "@react-google-maps/api";
 import toast from "react-hot-toast";
+// import VoiceNote from "../../components/common/Audio/VoiceNote";
 
-const libraries = ['places'];
+const libraries = ["places"];
 
 // Define the FeatureListItem component
 const FeatureListItem = ({ imageSrc, text }) => (
@@ -25,11 +26,17 @@ const SubmitProperty = () => {
   const [uploadedImages, setUploadedImages] = useState([]);
   const [address, setAddress] = useState("");
   const [searchBox, setSearchBox] = useState(null);
-
+  const [audioFile, setAudioFile] = useState(null);
+  const [audioSrc, setAudioSrc] = useState(null);
+  // eslint-disable-next-line 
+  const [hasDeletedAudio, setHasDeletedAudio] = useState(false);
+  const [validPlaceSelected, setValidPlaceSelected] = useState(false);
+  const [loading, setLoading] = useState(false);
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_API_KEY,
     libraries,
   });
+  console.log(audioFile);
 
   const onLoad = (ref) => {
     setSearchBox(ref);
@@ -41,9 +48,10 @@ const SubmitProperty = () => {
       if (places && places.length > 0) {
         const place = places[0];
         setAddress(place.formatted_address);
+        setValidPlaceSelected(true);
         setValue("propertyAddress", place.formatted_address, {
           shouldValidate: true,
-          shouldDirty: true
+          shouldDirty: true,
         });
       }
     }
@@ -54,14 +62,26 @@ const SubmitProperty = () => {
     sellerName: z.string().min(1, { message: "Seller Name is required" }),
     companyName: z.string().min(1, { message: "Company Name is required" }),
     email: z.string().email({ message: "Invalid email address" }),
-    phone: z.string().optional(),
+    // phone: z
+    //   .string()
+    //   .regex(/^\d{11}$/, "Phone number must be 7-15 digits")
+    //   .optional(),
+    phone: z
+      .string()
+      .nonempty("Phone number is required")
+      .min(7, "Phone number should be 7-15 digits"),
   });
+  const driveLinkRegex = /^(https?:\/\/)?(www\.)?(drive\.google\.com\/.+)$/;
 
   const propertyInfoSchema = z.object({
     propertyAddress: z
       .string()
       .min(1, { message: "Property Address is required" }),
-    cloudLink: z.string().optional(),
+    cloudLink: z
+      .string()
+      .regex(driveLinkRegex, "Invalid Google Drive URL")
+      .or(z.literal("")) // allow empty string
+      .optional(),
     saleType: z.string().min(1, { message: "Sale Type is required" }),
     propertyPrice: z.string().min(1, { message: "Property Price is required" }),
     beds: z.string().min(1, { message: "Number of Beds is required" }),
@@ -124,36 +144,44 @@ const SubmitProperty = () => {
   };
 
   const onPropertyInfoSubmit = async (data) => {
+    if (!validPlaceSelected) {
+      toast.error("Please select a valid place");
+      return;
+    }
     try {
+      setLoading(true);
       // Create FormData object
       const formData = new FormData();
 
       // Add seller info
-      formData.append('seller_name', sellerData.sellerName);
-      formData.append('company_name', sellerData.companyName);
-      formData.append('email', sellerData.email);
-      
+      formData.append("seller_name", sellerData.sellerName);
+      formData.append("company_name", sellerData.companyName);
+      formData.append("email", sellerData.email);
+
       // Split phone into country code and number
       const phoneNumber = sellerData.phone;
       const countryCode = phoneNumber.substring(0, phoneNumber.length - 10);
       const mobileNumber = phoneNumber.substring(phoneNumber.length - 10);
-      
-      formData.append('country_code', countryCode);
-      formData.append('mobile_number', mobileNumber);
+
+      formData.append("country_code", countryCode);
+      formData.append("mobile_number", mobileNumber);
 
       // Add property info
-      formData.append('address', data.propertyAddress);
-      formData.append('gallery_link', data.cloudLink || '');
-      formData.append('price', data.propertyPrice);
-      formData.append('asset_type', data.assetType);
-      formData.append('sale_type', data.saleType);
-      formData.append('no_of_beds', data.beds);
-      formData.append('no_of_baths', data.baths);
-      formData.append('propery_area', data.totalSqFt);
-      
+      formData.append("address", data.propertyAddress);
+      formData.append("gallery_link", data.cloudLink || "");
+      formData.append("price", data.propertyPrice);
+      formData.append("asset_type", data.assetType);
+      formData.append("sale_type", data.saleType);
+      formData.append("no_of_beds", data.beds);
+      formData.append("no_of_baths", data.baths);
+      formData.append("propery_area", data.totalSqFt);
+
       // Add static values
-      formData.append('is_available_to_sell', '1');
-      formData.append('token', 'STATIC_TOKEN_yyu673gb@!hjhxz@jjkah76wyggg378gyggmkjjd12sds@!knl');
+      formData.append("is_available_to_sell", "1");
+      formData.append(
+        "token",
+        "STATIC_TOKEN_yyu673gb@!hjhxz@jjkah76wyggg378gyggmkjjd12sds@!knl"
+      );
 
       // Get lat/lng from the Places API result
       if (searchBox) {
@@ -162,27 +190,32 @@ const SubmitProperty = () => {
           const place = places[0];
           const lat = place.geometry.location.lat();
           const lng = place.geometry.location.lng();
-          formData.append('lat', lat.toString());
-          formData.append('lang', lng.toString());
+          formData.append("lat", lat.toString());
+          formData.append("lang", lng.toString());
         }
+      }
+
+      // Add audio file if exists
+      if (audioFile) {
+        formData.append("audio_file", audioFile);
       }
 
       // Add images if any
       if (uploadedImages.length > 0) {
         uploadedImages.forEach((img, index) => {
-          console.log('Appending image:', img.file.name); // Debug log
-          formData.append('property_pic[]', img.file);
+          console.log("Appending image:", img.file.name); // Debug log
+          formData.append("property_pic[]", img.file);
         });
       }
 
       // Log FormData contents for debugging
       for (let pair of formData.entries()) {
-        console.log(pair[0] + ': ' + pair[1]);
+        console.log(pair[0] + ": " + pair[1]);
       }
 
       // Make API call
       const response = await fetch(process.env.REACT_APP_CREATE_PROPERTY_URL, {
-        method: 'POST',
+        method: "POST",
         body: formData,
       });
 
@@ -193,12 +226,20 @@ const SubmitProperty = () => {
         resetPropertyForm();
         setCurrentView("sellerInfo");
         setUploadedImages([]);
+        setAudioSrc(null);
       } else {
         toast.error(result.message || "Failed to submit property");
       }
+      resetPropertyForm();
+      resetSellerForm();
+      setPhone("");
+      setLoading(false);
+      setAudioFile(null);
+      setAddress("");
     } catch (error) {
-      console.error('Error submitting property:', error);
+      console.error("Error submitting property:", error);
       toast.error("Failed to submit property. Please try again.");
+      setLoading(false);
     }
   };
 
@@ -217,14 +258,28 @@ const SubmitProperty = () => {
       return;
     }
 
+    // Validate file types - only accept PNG, JPG, and JPEG
+    const validTypes = ["image/jpeg", "image/jpg", "image/png"];
+    const invalidFiles = files.filter(
+      (file) => !validTypes.includes(file.type)
+    );
+
+    if (invalidFiles.length > 0) {
+      toast.error("Only PNG, JPG, and JPEG image formats are allowed");
+      return;
+    }
+
     // Log the files being processed
-    console.log('Files selected:', files.map(f => f.name));
+    console.log(
+      "Files selected:",
+      files.map((f) => f.name)
+    );
 
     const newImages = files.map((file) => {
-      console.log('Processing file:', file.name, 'Type:', file.type); // Debug log
+      console.log("Processing file:", file.name, "Type:", file.type); // Debug log
       return {
         file,
-        preview: URL.createObjectURL(file)
+        preview: URL.createObjectURL(file),
       };
     });
 
@@ -238,6 +293,50 @@ const SubmitProperty = () => {
     newImages.splice(index, 1);
     setUploadedImages(newImages);
   };
+
+  // Add a useEffect to handle object URL creation and cleanup
+  useEffect(() => {
+    // Create object URL when audioFile changes
+    if (audioFile) {
+      const objectUrl = URL.createObjectURL(audioFile);
+      setAudioSrc(objectUrl);
+
+      // Cleanup function to revoke the URL when component unmounts or audioFile changes
+      return () => {
+        URL.revokeObjectURL(objectUrl);
+      };
+    } else {
+      setAudioSrc(null);
+    }
+  }, [audioFile]);
+
+  useEffect(() => {
+    // Initialize audio recording
+    async function setupRecording() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          audio: true,
+        });
+        window.recordingStream = stream;
+      } catch (err) {
+        console.error("Error accessing microphone:", err);
+        toast.error("Could not access microphone. Please check permissions.");
+      }
+    }
+
+    // Set up recording when component mounts
+    setupRecording();
+
+    // Clean up when component unmounts
+    return () => {
+      if (window.recordingStream) {
+        window.recordingStream.getTracks().forEach((track) => track.stop());
+      }
+      if (audioSrc) {
+        URL.revokeObjectURL(audioSrc);
+      }
+    };
+  }, []);
 
   if (loadError) {
     return <div>Error loading maps</div>;
@@ -382,23 +481,27 @@ const SubmitProperty = () => {
                               {sellerErrors.email.message}
                             </div>
                           )}
-                              <div className="phone-input-container">
-                <PhoneInput
-                  country={"us"}
-                  value={phone}
-                  onChange={(value) => {
-                    setPhone(value);
-                    setValue("phone", value);
-                  }}
-                  containerClass={`phone-input-wrapper`}
-                  inputClass={` ${sellerErrors.phone ? "!border-red-500" : ""} phone-input-field`}
-                  buttonClass="country-dropdown"
-                  placeholder="Phone"
-                  dropdownClass="country-dropdown-list"
-                />
-              </div>
+                          <div className="phone-input-container">
+                            <PhoneInput
+                              country={"us"}
+                              value={phone}
+                              onChange={(value) => {
+                                setPhone(value);
+                                setValue("phone", value, {
+                                  shouldValidate: true,
+                                });
+                              }}
+                              containerClass={`phone-input-wrapper`}
+                              inputClass={` ${
+                                sellerErrors.phone ? "!border-red-500" : ""
+                              } phone-input-field`}
+                              buttonClass="country-dropdown"
+                              placeholder="Phone"
+                              dropdownClass="country-dropdown-list"
+                            />
+                          </div>
                           {sellerErrors.phone && (
-                            <div className="text-red-500 mt-[-10px] mb-[5px] text-[13px] ">
+                            <div className="text-red-500 !mt-[-2px] !mb-[5px] text-[13px] ">
                               {sellerErrors.phone.message}
                             </div>
                           )}
@@ -443,10 +546,15 @@ const SubmitProperty = () => {
                                   value={address}
                                   onChange={(e) => {
                                     setAddress(e.target.value);
-                                    setValue("propertyAddress", e.target.value, { 
-                                      shouldValidate: true,
-                                      shouldDirty: true 
-                                    });
+                                    setValidPlaceSelected(false);
+                                    setValue(
+                                      "propertyAddress",
+                                      e.target.value,
+                                      {
+                                        shouldValidate: true,
+                                        shouldDirty: true,
+                                      }
+                                    );
                                   }}
                                 />
                               </StandaloneSearchBox>
@@ -457,21 +565,28 @@ const SubmitProperty = () => {
                               {propertyErrors.propertyAddress.message}
                             </div>
                           )}
-                          <div className="form-group">
-                            <label>
-                              <img
-                                src={IMAGES.GRADIENT_LINK_ICON}
-                                alt="link"
-                                style={{ width: "20px", height: "20px" }}
+                          <div className="w-full">
+                            <div className="form-group">
+                              <label>
+                                <img
+                                  src={IMAGES.GRADIENT_LINK_ICON}
+                                  alt="link"
+                                  style={{ width: "20px", height: "20px" }}
+                                />
+                              </label>
+                              <input
+                                type="text"
+                                className="form-control"
+                                placeholder="Enter Cloud Link (Optional)"
+                                {...registerProperty("cloudLink")}
                               />
-                            </label>
-                            <input
-                              type="text"
-                              className="form-control"
-                              placeholder="Enter Cloud Link (Optional)"
-                              {...registerProperty("cloudLink")}
-                            />
+                            </div>
                           </div>
+                          {propertyErrors.cloudLink && (
+                            <div className="text-red-500 mt-[-10px] mb-[5px] text-[13px] ">
+                              {propertyErrors.cloudLink.message}
+                            </div>
+                          )}
                           <div
                             style={{
                               display: "grid",
@@ -717,6 +832,182 @@ const SubmitProperty = () => {
                               )}
                             </div>
                           </div>
+                          <div className="w-full mb-3">
+                            <div className="audio-recorder-container border border-gray-300 rounded-lg p-3">
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-3">
+                                  {/* <img
+                                    src={IMAGES.RECORD_ICON}
+                                    alt="audio"
+                                 className="h-[30px] w-[30px]"
+                                  /> */}
+                                  <span className="text-[#777681]">
+                                    {audioSrc
+                                      ? "Audio Recording"
+                                      : "Record Property Description"}
+                                  </span>
+                                </div>
+
+                                <div className="flex gap-2">
+                                  {!audioSrc ? (
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        const mediaRecorder = new MediaRecorder(
+                                          window.recordingStream
+                                        );
+                                        const chunks = [];
+
+                                        mediaRecorder.ondataavailable = (e) => {
+                                          chunks.push(e.data);
+                                        };
+
+                                        mediaRecorder.onstop = () => {
+                                          const blob = new Blob(chunks, {
+                                            type: "audio/webm",
+                                          });
+                                          const file = new File(
+                                            [blob],
+                                            "audio-message.webm",
+                                            { type: "audio/webm" }
+                                          );
+                                          setAudioFile(file);
+                                        };
+
+                                        mediaRecorder.start();
+
+                                        window.currentRecorder = mediaRecorder;
+                                        document
+                                          .getElementById("recording-status")
+                                          .classList.remove("hidden");
+                                        document
+                                          .getElementById("start-recording")
+                                          .classList.add("hidden");
+                                        document
+                                          .getElementById("stop-recording")
+                                          .classList.remove("hidden");
+                                      }}
+                                      id="start-recording"
+                                      className="flex items-center justify-center bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-full w-8 h-8"
+                                    >
+                                      <span className="material-icons text-lg">
+                                        <img
+                                          src={IMAGES.RECORD_ICON}
+                                          alt="record"
+                                        />
+                                      </span>
+                                    </button>
+                                  ) : (
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        const audioElement =
+                                          document.getElementById(
+                                            "recorded-audio"
+                                          );
+                                        if (audioElement.paused) {
+                                          audioElement.play();
+                                          document.getElementById(
+                                            "play-pause-icon"
+                                          ).innerHTML = `<img src="${IMAGES.PAUSE_ICON}" alt="pause" />`;
+                                        } else {
+                                          audioElement.pause();
+                                          document.getElementById(
+                                            "play-pause-icon"
+                                          ).innerHTML = `<img src="${IMAGES.PLAY_ICON}" alt="play" />`;
+                                        }
+                                      }}
+                                      className="flex items-center justify-center bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-full w-8 h-8"
+                                    >
+                                      <span
+                                        className="material-icons text-lg"
+                                        id="play-pause-icon"
+                                      >
+                                        <img
+                                          src={IMAGES.PLAY_ICON}
+                                          alt="play"
+                                        />
+                                      </span>
+                                    </button>
+                                  )}
+
+                                  <button
+                                    type="button"
+                                    id="stop-recording"
+                                    className="flex items-center justify-center bg-red-500 text-white rounded-full w-8 h-8 hidden"
+                                    onClick={() => {
+                                      if (window.currentRecorder) {
+                                        window.currentRecorder.stop();
+                                        document
+                                          .getElementById("recording-status")
+                                          .classList.add("hidden");
+                                        document
+                                          .getElementById("stop-recording")
+                                          .classList.add("hidden");
+                                        document
+                                          .getElementById("start-recording")
+                                          .classList.remove("hidden");
+                                      }
+                                    }}
+                                  >
+                                    <span className="material-icons text-lg">
+                                      <img src={IMAGES.STOP_ICON} alt="stop" />
+                                    </span>
+                                  </button>
+
+                                  {audioSrc && (
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        setAudioFile(null);
+                                        setAudioSrc(null);
+                                        setHasDeletedAudio(true);
+                                      }}
+                                      className="flex items-center justify-center text-white rounded-full w-8 h-8"
+                                    >
+                                      <img
+                                        src={IMAGES.DELETE_ICON}
+                                        alt="delete"
+                                      />
+                                    </button>
+                                  )}
+                                </div>
+                              </div>
+
+                              <div
+                                id="recording-status"
+                                className="flex items-center gap-2 mt-2 hidden"
+                              >
+                                <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+                                <span className="text-sm text-red-500">
+                                  Recording...
+                                </span>
+                              </div>
+
+                              {audioSrc && (
+                                <audio
+                                  id="recorded-audio"
+                                  src={audioSrc}
+                                  className="hidden"
+                                  onPlay={() => {
+                                    document.getElementById(
+                                      "play-pause-icon"
+                                    ).innerHTML = `<img src="${IMAGES.STOP_ICON}" alt="pause" />`;
+                                  }}
+                                  onPause={() => {
+                                    document.getElementById(
+                                      "play-pause-icon"
+                                    ).innerHTML = `<img src="${IMAGES.PLAY_ICON}" alt="play" />`;
+                                  }}
+                                  onEnded={() => {
+                                    document.getElementById(
+                                      "play-pause-icon"
+                                    ).innerHTML = `<img src="${IMAGES.PLAY_ICON}" alt="play" />`;
+                                  }}
+                                />
+                              )}
+                            </div>
+                          </div>
                           <div className="form-group">
                             <label></label>
                             <div className="w-full">
@@ -793,7 +1084,9 @@ const SubmitProperty = () => {
                             </span>
                             <button
                               type="submit"
-                              className="btn btn-primary-gradient"
+                              className={`btn btn-primary-gradient ${
+                                loading && "loading"
+                              }`}
                               style={{ flexGrow: 1, marginLeft: "10px" }}
                             >
                               Submit
