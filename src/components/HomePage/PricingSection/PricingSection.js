@@ -113,7 +113,7 @@ const PricingSection = () => {
               </div>
 
               <div className="price-action">
-                <a target="_blank" rel="noopener noreferrer" href={`${process.env.REACT_APP_WEBAPP_URL}/subscribe?plan=${plan.link}`} className="subscribe-btn">Subscribe</a>
+                <a target="_blank" rel="noopener noreferrer" href={`${process.env.REACT_APP_WEBAPP_URL}${plan.link}`} className="subscribe-btn">Subscribe</a>
               </div>
             </div>
           ))}
