@@ -326,7 +326,7 @@ const VerifiedInvestorModal = ({ isOpen, onClose }) => {
               <div className="form-group">
                 <label htmlFor="companyName">
                   <img
-                    src="/images/png/building-fill.png"
+                    src="/images/svg/building-fill.svg"
                     alt="Building"
                     className="icon"
                   />
@@ -352,7 +352,7 @@ const VerifiedInvestorModal = ({ isOpen, onClose }) => {
               <div className="form-group">
                 <label htmlFor="profession">
                   <img
-                    src="/images/png/person-profession-icon.png"
+                    src="/images/svg/person.svg"
                     alt="Profession"
                     className="icon"
                   />
@@ -381,7 +381,7 @@ const VerifiedInvestorModal = ({ isOpen, onClose }) => {
               <div className="form-group">
                 <label htmlFor="referralName">
                   <img
-                    src="/images/png/person-referral-icon.png"
+                    src="/images/svg/person-tick.svg"
                     alt="Referral Name"
                     className="icon"
                   />
@@ -401,7 +401,7 @@ const VerifiedInvestorModal = ({ isOpen, onClose }) => {
             <div className="form-group social-media-group">
               <label htmlFor="socialMedia">
                 <img
-                  src="/images/png/social-link-icon.png"
+                  src="/images/svg/linking.svg"
                   alt="Social Media"
                   className="icon"
                 />
@@ -453,7 +453,7 @@ const VerifiedInvestorModal = ({ isOpen, onClose }) => {
               <div className="form-group">
                 <label htmlFor="propertyAddress">
                   <img
-                    src="/images/png/location-icon.png"
+                    src="/images/svg/location.svg"
                     alt="Property Address"
                     className="icon"
                   />
@@ -496,7 +496,7 @@ const VerifiedInvestorModal = ({ isOpen, onClose }) => {
               <div className="form-group">
                 <label htmlFor="transactionDate" className="z-10">
                   <img
-                    src="/images/png/calendar-2-fill.png"
+                    src="/images/svg/calender-new.svg"
                     alt="Transaction Date"
                     className="icon"
                   />
@@ -520,7 +520,7 @@ const VerifiedInvestorModal = ({ isOpen, onClose }) => {
                   }
                   maxDate={new Date()}
                   dateFormat="MM/dd/yyyy"
-                  placeholderText="Enter Transaction Date"
+                  placeholderText="Select Transaction Date"
                   className={`w-full ${
                     errors.transactionDate ? "!border-red-500" : ""
                   }`}
@@ -531,7 +531,7 @@ const VerifiedInvestorModal = ({ isOpen, onClose }) => {
                       className={`w-full ${
                         errors.transactionDate ? "!border-red-500" : ""
                       }`}
-                      placeholder="Enter Transaction Date"
+                      placeholder="Select Transaction Date"
                     />
                   }
                 />
@@ -546,7 +546,7 @@ const VerifiedInvestorModal = ({ isOpen, onClose }) => {
               <div className="form-group">
                 <label htmlFor="purchasePrice">
                   <img
-                    src="/images/png/money-dollar-circle-fill.png"
+                    src="/images/svg/dolla.svg"
                     alt="Purchase Price"
                     className="icon"
                   />
@@ -572,7 +572,7 @@ const VerifiedInvestorModal = ({ isOpen, onClose }) => {
               <div className="form-group">
                 <label htmlFor="soldPrice">
                   <img
-                    src="/images/png/price-tag-3-fill.png"
+                    src="/images/svg/tag.svg"
                     alt="Sold Price"
                     className="icon"
                   />
@@ -596,7 +596,7 @@ const VerifiedInvestorModal = ({ isOpen, onClose }) => {
               <div className="form-group">
                 <label htmlFor="areasOfInterest">
                   <img
-                    src="/images/png/area-icon.png"
+                    src="/images/svg/intrest.svg"
                     alt="Areas Of Interest"
                     className="icon"
                   />
@@ -624,7 +624,7 @@ const VerifiedInvestorModal = ({ isOpen, onClose }) => {
               <div className="form-group full-width">
                 <label htmlFor="aboutYourself" className="!top-[22px]">
                   <img
-                    src="/images/png/note-write-icon.png"
+                    src="/images/svg/kitab.svg"
                     alt="About Yourself"
                     className="icon"
                   />

@@ -78,10 +78,10 @@ const AffiliateSection = () => {
                 <div className="flex gap-4 items-center">
                   <div className="affiliate-buttons">
                     <button
-                      className="btn-become-affiliate"
+                      className="btn-become-affiliate !flex items-center"
                       onClick={openModal}
                     >
-                      <p className="bg-gradient-to-r from-[#003F79] via-[#00ACDB] to-[#00ACDB] inline-block text-transparent bg-clip-text"> Become a FlippBidd Affiliate</p>
+                      <p className="bg-gradient-to-r truncate from-[#003F79] via-[#00ACDB] to-[#00ACDB] inline-block text-transparent bg-clip-text"> Become a FlippBidd Affiliate</p>
                     </button>
                   </div>
 

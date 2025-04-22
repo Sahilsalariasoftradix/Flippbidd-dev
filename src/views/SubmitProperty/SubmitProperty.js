@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "./SubmitProperty.css";
 import { IMAGES } from "../../utils/constants";
 
@@ -8,6 +8,7 @@ import { z } from "zod";
 import PhoneInput from "react-phone-input-2";
 import { useLoadScript, StandaloneSearchBox } from "@react-google-maps/api";
 import toast from "react-hot-toast";
+import WaveSurfer from "wavesurfer.js";
 // import VoiceNote from "../../components/common/Audio/VoiceNote";
 
 const libraries = ["places"];
@@ -28,14 +29,20 @@ const SubmitProperty = () => {
   const [searchBox, setSearchBox] = useState(null);
   const [audioFile, setAudioFile] = useState(null);
   const [audioSrc, setAudioSrc] = useState(null);
-  // eslint-disable-next-line 
   const [hasDeletedAudio, setHasDeletedAudio] = useState(false);
   const [validPlaceSelected, setValidPlaceSelected] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const waveformRef = useRef(null);
+  const wavesurferRef = useRef(null);
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_API_KEY,
     libraries,
   });
+  const [recordingTime, setRecordingTime] = useState(0);
+  const recordingTimerRef = useRef(null);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
   console.log(audioFile);
 
   const onLoad = (ref) => {
@@ -61,7 +68,10 @@ const SubmitProperty = () => {
   const sellerInfoSchema = z.object({
     sellerName: z.string().min(1, { message: "Seller Name is required" }),
     companyName: z.string().min(1, { message: "Company Name is required" }),
-    email: z.string().email({ message: "Invalid email address" }),
+    email: z
+    .string()
+    .nonempty("Email address is required") // When the field is empty
+    .email("Email address is invalid"), // When the field is not a valid email
     // phone: z
     //   .string()
     //   .regex(/^\d{11}$/, "Phone number must be 7-15 digits")
@@ -88,7 +98,7 @@ const SubmitProperty = () => {
     baths: z.string().min(1, { message: "Number of Baths is required" }),
     totalSqFt: z.string().min(1, { message: "Total Sq Ft Area is required" }),
     assetType: z.string().min(1, { message: "Asset Type is required" }),
-    propertyImages: z.any().optional(),
+    propertyImages: z.any(),
   });
 
   // Setup React Hook Form for seller info
@@ -146,6 +156,10 @@ const SubmitProperty = () => {
   const onPropertyInfoSubmit = async (data) => {
     if (!validPlaceSelected) {
       toast.error("Please select a valid place");
+      return;
+    }
+    if (uploadedImages.length === 0) {
+      toast.error("Please upload at least one property image");
       return;
     }
     try {
@@ -214,10 +228,13 @@ const SubmitProperty = () => {
       }
 
       // Make API call
-      const response = await fetch(process.env.REACT_APP_CREATE_PROPERTY_URL, {
-        method: "POST",
-        body: formData,
-      });
+      const response = await fetch(
+        `${process.env.REACT_APP_DEV_URL}/property/manual/create/web-hook`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
 
       const result = await response.json();
 
@@ -311,33 +328,100 @@ const SubmitProperty = () => {
   }, [audioFile]);
 
   useEffect(() => {
-    // Initialize audio recording
-    async function setupRecording() {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          audio: true,
-        });
-        window.recordingStream = stream;
-      } catch (err) {
-        console.error("Error accessing microphone:", err);
-        toast.error("Could not access microphone. Please check permissions.");
-      }
-    }
+    // Create object URL when audioFile changes
+    if (audioFile) {
+      const objectUrl = URL.createObjectURL(audioFile);
+      setAudioSrc(objectUrl);
 
-    // Set up recording when component mounts
-    setupRecording();
+      // Cleanup function to revoke the URL when component unmounts or audioFile changes
+      return () => {
+        URL.revokeObjectURL(objectUrl);
+      };
+    } else {
+      setAudioSrc(null);
+    }
 
     // Clean up when component unmounts
     return () => {
       if (window.recordingStream) {
         window.recordingStream.getTracks().forEach((track) => track.stop());
       }
-      if (audioSrc) {
-        URL.revokeObjectURL(audioSrc);
-      }
     };
     // eslint-disable-next-line
-  }, []);
+  }, [audioFile]);
+
+  // Add this useEffect for wavesurfer initialization
+  useEffect(() => {
+    if (audioSrc && waveformRef.current) {
+      // Destroy existing wavesurfer instance if it exists
+      if (wavesurferRef.current) {
+        wavesurferRef.current.destroy();
+      }
+
+      // Create a new wavesurfer instance
+      const wavesurfer = WaveSurfer.create({
+        container: waveformRef.current,
+        waveColor: "#003F79",
+        progressColor: "#00ACDB",
+        cursorColor: "transparent",
+        barWidth: 2,
+        barRadius: 3,
+        responsive: true,
+        height: 40,
+        barGap: 2,
+        normalize: true,
+      });
+
+      wavesurfer.load(audioSrc);
+
+      wavesurfer.on("ready", () => {
+        wavesurferRef.current = wavesurfer;
+        setDuration(Math.floor(wavesurfer.getDuration()));
+        setCurrentTime(0);
+      });
+
+      wavesurfer.on("play", () => {
+        setIsPlaying(true);
+        document.getElementById(
+          "play-pause-icon"
+        ).innerHTML = `<img src="${IMAGES.STOP_ICON}" alt="pause" />`;
+      });
+
+      wavesurfer.on("pause", () => {
+        setIsPlaying(false);
+        document.getElementById(
+          "play-pause-icon"
+        ).innerHTML = `<img src="${IMAGES.PLAY_ICON}" alt="play" />`;
+      });
+
+      wavesurfer.on("finish", () => {
+        setIsPlaying(false);
+        document.getElementById(
+          "play-pause-icon"
+        ).innerHTML = `<img src="${IMAGES.PLAY_ICON}" alt="play" />`;
+        setCurrentTime(duration);
+      });
+
+      wavesurfer.on("audioprocess", () => {
+        setCurrentTime(Math.floor(wavesurfer.getCurrentTime()));
+      });
+
+      return () => {
+        if (wavesurfer) {
+          wavesurfer.destroy();
+        }
+      };
+    }
+  }, [audioSrc, IMAGES.STOP_ICON, IMAGES.PLAY_ICON]);
+
+  // Add this function to format the recording time
+  const formatTime = (seconds) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes.toString().padStart(2, "0")}:${remainingSeconds
+      .toString()
+      .padStart(2, "0")}`;
+  };
 
   if (loadError) {
     return <div>Error loading maps</div>;
@@ -424,8 +508,9 @@ const SubmitProperty = () => {
                             </label>
                             <input
                               type="text"
-                              className={`form-control ${sellerErrors.sellerName ? "!border-red-500" : ""
-                                }`}
+                              className={`form-control ${
+                                sellerErrors.sellerName ? "!border-red-500" : ""
+                              }`}
                               placeholder="Seller Name"
                               {...registerSeller("sellerName")}
                             />
@@ -445,10 +530,11 @@ const SubmitProperty = () => {
                             </label>
                             <input
                               type="text"
-                              className={`form-control ${sellerErrors.companyName
-                                ? "!border-red-500"
-                                : ""
-                                }`}
+                              className={`form-control ${
+                                sellerErrors.companyName
+                                  ? "!border-red-500"
+                                  : ""
+                              }`}
                               placeholder="Company Name"
                               {...registerSeller("companyName")}
                             />
@@ -468,8 +554,9 @@ const SubmitProperty = () => {
                             </label>
                             <input
                               type="text"
-                              className={`form-control ${sellerErrors.email ? "!border-red-500" : ""
-                                }`}
+                              className={`form-control ${
+                                sellerErrors.email ? "!border-red-500" : ""
+                              }`}
                               placeholder="Email"
                               {...registerSeller("email")}
                             />
@@ -490,8 +577,9 @@ const SubmitProperty = () => {
                                 });
                               }}
                               containerClass={`phone-input-wrapper`}
-                              inputClass={` ${sellerErrors.phone ? "!border-red-500" : ""
-                                } phone-input-field`}
+                              inputClass={` ${
+                                sellerErrors.phone ? "!border-red-500" : ""
+                              } phone-input-field`}
                               buttonClass="country-dropdown"
                               placeholder="Phone"
                               dropdownClass="country-dropdown-list"
@@ -533,10 +621,11 @@ const SubmitProperty = () => {
                               >
                                 <input
                                   type="text"
-                                  className={`form-control ${propertyErrors.propertyAddress
-                                    ? "!border-red-500"
-                                    : ""
-                                    }`}
+                                  className={`form-control ${
+                                    propertyErrors.propertyAddress
+                                      ? "!border-red-500"
+                                      : ""
+                                  }`}
                                   placeholder="Enter Your Property Address"
                                   {...registerProperty("propertyAddress")}
                                   value={address}
@@ -600,10 +689,11 @@ const SubmitProperty = () => {
                                   />
                                 </label>
                                 <select
-                                  className={`form-control !bg-transparent !py-[14px] ${propertyErrors.saleType
-                                    ? "!border-red-500"
-                                    : ""
-                                    }`}
+                                  className={`form-control !bg-transparent !py-[14px] ${
+                                    propertyErrors.saleType
+                                      ? "!border-red-500"
+                                      : ""
+                                  }`}
                                   {...registerProperty("saleType")}
                                 >
                                   <option selected value="">
@@ -655,10 +745,11 @@ const SubmitProperty = () => {
                                 </label>
                                 <input
                                   type="text"
-                                  className={`form-control ${propertyErrors.propertyPrice
-                                    ? "!border-red-500"
-                                    : ""
-                                    }`}
+                                  className={`form-control ${
+                                    propertyErrors.propertyPrice
+                                      ? "!border-red-500"
+                                      : ""
+                                  }`}
                                   placeholder="Enter Property Price"
                                   {...registerProperty("propertyPrice")}
                                   onInput={handleIntegerInput}
@@ -681,8 +772,9 @@ const SubmitProperty = () => {
                                 </label>
                                 <input
                                   type="text"
-                                  className={`form-control ${propertyErrors.beds ? "!border-red-500" : ""
-                                    }`}
+                                  className={`form-control ${
+                                    propertyErrors.beds ? "!border-red-500" : ""
+                                  }`}
                                   placeholder="Enter no. of Beds"
                                   {...registerProperty("beds")}
                                   onInput={handleIntegerInput}
@@ -705,10 +797,11 @@ const SubmitProperty = () => {
                                 </label>
                                 <input
                                   type="text"
-                                  className={`form-control ${propertyErrors.baths
-                                    ? "!border-red-500"
-                                    : ""
-                                    }`}
+                                  className={`form-control ${
+                                    propertyErrors.baths
+                                      ? "!border-red-500"
+                                      : ""
+                                  }`}
                                   placeholder="Enter no. of Baths"
                                   {...registerProperty("baths")}
                                   onInput={handleIntegerInput}
@@ -731,10 +824,11 @@ const SubmitProperty = () => {
                                 </label>
                                 <input
                                   type="text"
-                                  className={`form-control ${propertyErrors.totalSqFt
-                                    ? "!border-red-500"
-                                    : ""
-                                    }`}
+                                  className={`form-control ${
+                                    propertyErrors.totalSqFt
+                                      ? "!border-red-500"
+                                      : ""
+                                  }`}
                                   placeholder="Enter Total sq Ft. Area"
                                   {...registerProperty("totalSqFt")}
                                   onInput={handleIntegerInput}
@@ -756,10 +850,11 @@ const SubmitProperty = () => {
                                   />
                                 </label>
                                 <select
-                                  className={`form-control !bg-transparent !py-[14px] ${propertyErrors.assetType
-                                    ? "!border-red-500"
-                                    : ""
-                                    }`}
+                                  className={`form-control !bg-transparent !py-[14px] ${
+                                    propertyErrors.assetType
+                                      ? "!border-red-500"
+                                      : ""
+                                  }`}
                                   {...registerProperty("assetType")}
                                 >
                                   <option selected value="">
@@ -826,59 +921,88 @@ const SubmitProperty = () => {
                             <div className="audio-recorder-container border border-gray-300 rounded-lg p-3">
                               <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-3">
-                                  {/* <img
-                                    src={IMAGES.RECORD_ICON}
-                                    alt="audio"
-                                 className="h-[30px] w-[30px]"
-                                  /> */}
-                                  <span className="text-[#777681]">
-                                    {audioSrc
-                                      ? "Audio Recording"
-                                      : "Record Property Description"}
-                                  </span>
-                                </div>
-
-                                <div className="flex gap-2">
                                   {!audioSrc ? (
                                     <button
                                       type="button"
-                                      onClick={() => {
-                                        const mediaRecorder = new MediaRecorder(
-                                          window.recordingStream
-                                        );
-                                        const chunks = [];
+                                      onClick={async () => {
+                                        try {
+                                          // Request microphone permissions when button is clicked
+                                          const stream =
+                                            await navigator.mediaDevices.getUserMedia(
+                                              {
+                                                audio: true,
+                                              }
+                                            );
 
-                                        mediaRecorder.ondataavailable = (e) => {
-                                          chunks.push(e.data);
-                                        };
+                                          // Store the stream for later use
+                                          window.recordingStream = stream;
 
-                                        mediaRecorder.onstop = () => {
-                                          const blob = new Blob(chunks, {
-                                            type: "audio/webm",
-                                          });
-                                          const file = new File(
-                                            [blob],
-                                            "audio-message.webm",
-                                            { type: "audio/webm" }
+                                          // Create and start the media recorder
+                                          const mediaRecorder =
+                                            new MediaRecorder(stream);
+                                          const chunks = [];
+
+                                          mediaRecorder.ondataavailable = (
+                                            e
+                                          ) => {
+                                            chunks.push(e.data);
+                                          };
+
+                                          mediaRecorder.onstop = () => {
+                                            const blob = new Blob(chunks, {
+                                              type: "audio/webm",
+                                            });
+                                            const file = new File(
+                                              [blob],
+                                              "audio-message.webm",
+                                              { type: "audio/webm" }
+                                            );
+                                            setAudioFile(file);
+
+                                            // Clear recording timer
+                                            if (recordingTimerRef.current) {
+                                              clearInterval(
+                                                recordingTimerRef.current
+                                              );
+                                              recordingTimerRef.current = null;
+                                            }
+                                            setRecordingTime(0);
+                                          };
+
+                                          mediaRecorder.start();
+
+                                          // Start recording timer
+                                          setRecordingTime(0);
+                                          recordingTimerRef.current =
+                                            setInterval(() => {
+                                              setRecordingTime(
+                                                (prev) => prev + 1
+                                              );
+                                            }, 1000);
+
+                                          window.currentRecorder =
+                                            mediaRecorder;
+                                          document
+                                            .getElementById("recording-status")
+                                            .classList.remove("hidden");
+                                          document
+                                            .getElementById("start-recording")
+                                            .classList.add("hidden");
+                                          document
+                                            .getElementById("stop-recording")
+                                            .classList.remove("hidden");
+                                        } catch (error) {
+                                          console.error(
+                                            "Error accessing microphone:",
+                                            error
                                           );
-                                          setAudioFile(file);
-                                        };
-
-                                        mediaRecorder.start();
-
-                                        window.currentRecorder = mediaRecorder;
-                                        document
-                                          .getElementById("recording-status")
-                                          .classList.remove("hidden");
-                                        document
-                                          .getElementById("start-recording")
-                                          .classList.add("hidden");
-                                        document
-                                          .getElementById("stop-recording")
-                                          .classList.remove("hidden");
+                                          toast.error(
+                                            "Unable to access microphone. Please check permissions and try again."
+                                          );
+                                        }
                                       }}
                                       id="start-recording"
-                                      className="flex items-center justify-center bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-full w-8 h-8"
+                                      className="flex items-center justify-center  text-white rounded-full w-10 h-10"
                                     >
                                       <span className="material-icons text-lg">
                                         <img
@@ -891,23 +1015,15 @@ const SubmitProperty = () => {
                                     <button
                                       type="button"
                                       onClick={() => {
-                                        const audioElement =
-                                          document.getElementById(
-                                            "recorded-audio"
-                                          );
-                                        if (audioElement.paused) {
-                                          audioElement.play();
-                                          document.getElementById(
-                                            "play-pause-icon"
-                                          ).innerHTML = `<img src="${IMAGES.PAUSE_ICON}" alt="pause" />`;
-                                        } else {
-                                          audioElement.pause();
-                                          document.getElementById(
-                                            "play-pause-icon"
-                                          ).innerHTML = `<img src="${IMAGES.PLAY_ICON}" alt="play" />`;
+                                        if (wavesurferRef.current) {
+                                          if (isPlaying) {
+                                            wavesurferRef.current.pause();
+                                          } else {
+                                            wavesurferRef.current.play();
+                                          }
                                         }
                                       }}
-                                      className="flex items-center justify-center bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-full w-8 h-8"
+                                      className="flex items-center justify-center  text-white rounded-full w-10 h-10"
                                     >
                                       <span
                                         className="material-icons text-lg"
@@ -920,11 +1036,10 @@ const SubmitProperty = () => {
                                       </span>
                                     </button>
                                   )}
-
                                   <button
                                     type="button"
                                     id="stop-recording"
-                                    className="flex items-center justify-center bg-red-500 text-white rounded-full w-8 h-8 hidden"
+                                    className="flex items-center justify-center  text-white rounded-full w-10 h-10 hidden"
                                     onClick={() => {
                                       if (window.currentRecorder) {
                                         window.currentRecorder.stop();
@@ -937,6 +1052,14 @@ const SubmitProperty = () => {
                                         document
                                           .getElementById("start-recording")
                                           .classList.remove("hidden");
+
+                                        // Clear recording timer
+                                        if (recordingTimerRef.current) {
+                                          clearInterval(
+                                            recordingTimerRef.current
+                                          );
+                                          recordingTimerRef.current = null;
+                                        }
                                       }
                                     }}
                                   >
@@ -944,34 +1067,70 @@ const SubmitProperty = () => {
                                       <img src={IMAGES.STOP_ICON} alt="stop" />
                                     </span>
                                   </button>
+                                </div>
+
+                                <div className="flex gap-2 justify-end items-center flex-grow ml-3">
+                                  {audioSrc ? (
+                                    <div className="w-full ">
+                                      <div
+                                        className="waveform-container "
+                                        ref={waveformRef}
+                                      ></div>
+                                      {/* <div className="text-xs text-gray-500 mt-1 text-right">
+                                        {formatTime(currentTime)} / {formatTime(duration)}
+                                      </div> */}
+                                    </div>
+                                  ) : (
+                                    <div className="flex items-center justify-between gap-2 w-full">
+                                      <img
+                                        src={IMAGES.STATIC_WAVES}
+                                        alt="Static Waves"
+                                        className="staticWaveImg"
+                                      />
+                                      <span className="text-[#777681] text-xs">
+                                        {formatTime(recordingTime)}
+                                      </span>
+                                    </div>
+                                  )}
 
                                   {audioSrc && (
-                                    <button
-                                      type="button"
-                                      onClick={() => {
-                                        setAudioFile(null);
-                                        setAudioSrc(null);
-                                        setHasDeletedAudio(true);
-                                      }}
-                                      className="flex items-center justify-center text-white rounded-full w-8 h-8"
-                                    >
-                                      <img
-                                        src={IMAGES.DELETE_ICON}
-                                        alt="delete"
-                                      />
-                                    </button>
+                                    <>
+                                      <div className="text-xs text-gray-500 mt-1 text-right">
+                                        {formatTime(currentTime)}
+                                        {/* / */}
+                                        {/* {formatTime(duration)} */}
+                                      </div>
+                                      <button
+                                        type="button"
+                                        onClick={() => {
+                                          setAudioFile(null);
+                                          setAudioSrc(null);
+                                          setHasDeletedAudio(true);
+                                          if (wavesurferRef.current) {
+                                            wavesurferRef.current.destroy();
+                                            wavesurferRef.current = null;
+                                          }
+                                        }}
+                                        className="flex items-center justify-center text-white rounded-full w-8 h-8 ml-2"
+                                      >
+                                        <img
+                                          src={IMAGES.DELETE_ICON}
+                                          alt="delete"
+                                        />
+                                      </button>
+                                    </>
                                   )}
                                 </div>
                               </div>
 
                               <div
                                 id="recording-status"
-                                className="flex items-center gap-2 mt-2 hidden"
+                                className="flex items-center gap-2  hidden"
                               >
-                                <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
-                                <span className="text-sm text-red-500">
-                                  Recording...
-                                </span>
+                                {/* <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span> */}
+                                {/* <span className="text-sm text-red-500">
+                                  Recording: {formatTime(recordingTime)}
+                                </span> */}
                               </div>
 
                               {audioSrc && (
@@ -1074,8 +1233,9 @@ const SubmitProperty = () => {
                             </span>
                             <button
                               type="submit"
-                              className={`btn btn-primary-gradient ${loading && "loading"
-                                }`}
+                              className={`btn btn-primary-gradient ${
+                                loading && "loading"
+                              }`}
                               style={{ flexGrow: 1, marginLeft: "10px" }}
                             >
                               Submit

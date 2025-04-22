@@ -314,7 +314,7 @@ const AffiliateModal = ({ isOpen, onClose }) => {
               <button
                 type="button"
                 className="more-btn"
-                onClick={() => append({ url: "" })}
+                onClick={addSocialMediaLink}
               >
                 + More
               </button>
@@ -377,7 +377,7 @@ const AffiliateModal = ({ isOpen, onClose }) => {
             <div className="form-group full-width">
               <label htmlFor="note" className="!top-[22px]">
                 <img
-                  src="/images/png/note-write-icon.png"
+                  src="/images/svg/kitab.svg"
                   alt="About Yourself"
                   className="icon"
                 />

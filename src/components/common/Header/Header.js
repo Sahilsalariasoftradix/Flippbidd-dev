@@ -78,10 +78,10 @@ const Header = () => {
               </li>
               <li className="mobile-auth-container">
                 <div className="nav-item auth-btn-container mobile-only">
-                  <a href={process.env.REACT_APP_FLIPPBIDD_SIGNUP_URL} target='_blank' rel="noopener noreferrer" className="btn btn-primary-gradient">Sign Up</a>
+                  <a href={`${process.env.REACT_APP_WEBAPP_URL}/auth/signup`} target='_blank' rel="noopener noreferrer" className="btn btn-primary-gradient">Sign Up</a>
                 </div>
                 <div className="nav-item auth-btn-container mobile-only">
-                  <a href={process.env.REACT_APP_FLIPPBIDD_LOGIN_URL} target='_blank' rel="noopener noreferrer" className="btn btn-primary-gradient">Log In</a>
+                  <a href={process.env.REACT_APP_WEBAPP_URL} target='_blank' rel="noopener noreferrer" className="btn btn-primary-gradient">Log In</a>
                 </div>
               </li>
             </ul>
@@ -95,7 +95,7 @@ const Header = () => {
               <a href={process.env.REACT_APP_FLIPPBIDD_SIGNUP_URL} target='_blank' rel="noopener noreferrer" className="btn btn-primary-gradient">Sign Up</a>
             </div>
             <div className="auth-buttons desktop-only">
-              <a href={process.env.REACT_APP_FLIPPBIDD_LOGIN_URL} target='_blank' rel="noopener noreferrer" className="btn btn-primary-gradient">Log In</a>
+              <a href={process.env.REACT_APP_WEBAPP_URL} target='_blank' rel="noopener noreferrer" className="btn btn-primary-gradient">Log In</a>
             </div>
             
             {showMenuToggle && (

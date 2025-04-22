@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import HeroSection from "../../components/HomePage/HeroSection/HeroSection";
 import LeadSection from "../../components/HomePage/LeadSection/LeadSection";
 import FeatureSection from "../../components/HomePage/FeatureSection/FeatureSection";
@@ -12,6 +12,7 @@ import InvestorServicesSection from "../../components/HomePage/InvestorServicesS
 import AppAvailabilitySection from "../../components/HomePage/AppAvailabilitySection/AppAvailabilitySection";
 import "./HomePage.css";
 import { useLoadScript } from "@react-google-maps/api";
+import { useLocation } from "react-router-dom";
 
 const HomePage = () => {
   const libraries = ["places"];
@@ -19,6 +20,10 @@ const HomePage = () => {
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_API_KEY,
     libraries,
   });
+  const location = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location]);
   return (
     <div className="home-page">
       <div className="non-editable">

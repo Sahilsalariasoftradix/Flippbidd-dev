@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { IMAGES } from "../../utils/constants";
 import "./SevenDayTrial.css";
 import PhoneInput from "react-phone-input-2";
@@ -8,12 +8,16 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { useLocation } from "react-router-dom";
 
 // Create validation schema with Zod
 const formSchema = z.object({
   fullName: z.string().min(1, "Full name is required"),
   companyName: z.string().optional(),
-  email: z.string().email("Invalid email address"),
+  email: z
+  .string()
+  .nonempty("Email address is required") // When the field is empty
+  .email("Email address is invalid"), // When the field is not a valid email
   phone: z
   .string()
   .nonempty("Phone number is required")
@@ -35,6 +39,10 @@ const formSchema = z.object({
 const SevenDayTrial = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [phoneValue, setPhoneValue] = useState("");
+  const location = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location]);
 
   // Set up React Hook Form with Zod resolver
   const {

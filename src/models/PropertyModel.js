@@ -12,7 +12,8 @@ class PropertyModel {
       { id: 3, title: 'Showcase Your Investments', icon: 'blue_tick_ic.svg' },
       { id: 4, title: 'Property Data & Comps', icon: 'blue_tick_ic.svg' },
       { id: 5, title: 'Network - In App Calls/Messaging', icon: 'blue_tick_ic.svg' },
-      { id: 6, title: 'National Skiptracing, and More...', icon: 'blue_tick_ic.svg' },
+      { id: 6, title: 'FlippBidd One Touch Feature: Get Property Data instantly', icon: 'blue_tick_ic.svg' },
+      { id: 7, title: 'National Skiptracing, and More...', icon: 'blue_tick_ic.svg' },
     ];
     
     this.polygonFeatures = [
@@ -24,6 +25,8 @@ class PropertyModel {
       { id: 6, title: 'Foreclosure', icon: 'blue_tick_ic.svg' },
       { id: 7, title: 'High Equity', icon: 'blue_tick_ic.svg' },
       { id: 8, title: 'Lis Pendens', icon: 'blue_tick_ic.svg' },
+      { id: 9, title: 'Underwater Mortgage', icon: 'blue_tick_ic.svg' },
+      { id: 10, title: 'Likely to Sell', icon: 'blue_tick_ic.svg' },
     ];
   }
 

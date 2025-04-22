@@ -8,6 +8,9 @@ import SubmitProperty from './views/SubmitProperty/SubmitProperty';
 import Header from './components/common/Header/Header';
 import Footer from './components/common/Footer/Footer';
 import { Toaster } from 'react-hot-toast';
+import TermsOfUse from './views/TermsOfUse/TermsOfUse';
+import BillingTerms from './views/BillingTerms/BillingTerms';
+import PrivacyPolicy from './views/PrivacyPolicy/PrivacyPolicy';
 
 function App() {
   return (
@@ -20,6 +23,9 @@ function App() {
           <Route path="/property-search" element={<PropertySearch />} />
           <Route path="/seven-day-trial" element={<SevenDayTrial />} />
           <Route path="/submit-property" element={<SubmitProperty />} />
+          <Route path="/termsofuse" element={<TermsOfUse />} />
+          <Route path="/billing-terms" element={<BillingTerms />} />
+          <Route path="/privacypolicy" element={<PrivacyPolicy />} />
         </Routes>
         <Footer />
       </div>

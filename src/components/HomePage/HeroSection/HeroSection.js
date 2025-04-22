@@ -78,18 +78,19 @@ const HeroSection = ({isLoaded, loadError}) => {
           <div className="search-container">
             <form onSubmit={handleSearch} className="search-form">
               <div className="search-input-wrapper">
-              <div className='flex'>
+              <div className='flex w-full'>
               <div className="search-icon">
                   <i className="fas fa-search"></i>
-                </div>
+                </div >
+                <div className='w-full '>
                 <StandaloneSearchBox
                   onLoad={onLoad}
                   onPlacesChanged={onPlacesChanged}
                 >
                   <input
                     type="text"
-                    placeholder="Search Property..."
-                    className="search-input min-w-[300px]"
+                    placeholder="Search Property by location..."
+                    className="search-input w-full min-w-[300px]"
                     value={address}
                     onChange={(e) => {
                       setAddress(e.target.value);
@@ -97,6 +98,7 @@ const HeroSection = ({isLoaded, loadError}) => {
                     }}
                   />
                 </StandaloneSearchBox>
+                </div>
               </div>
                 <button 
                   type="submit" 

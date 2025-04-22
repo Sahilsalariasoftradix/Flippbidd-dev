@@ -4,19 +4,15 @@ import { IMAGES } from "../../../utils/constants";
 import "./PropertiesSection.css";
 import axios from "axios";
 import toast from "react-hot-toast";
-import {
-  GoogleMap,
-  StreetViewPanorama,
-} from "@react-google-maps/api";
+import { GoogleMap, StreetViewPanorama } from "@react-google-maps/api";
 
-const PropertiesSection = ({isLoaded}) => {
+const PropertiesSection = ({ isLoaded }) => {
   // Sample properties data - in a real app, this would come from an API
   const [properties, setProperties] = useState([]);
-  console.log(properties)
+  console.log(properties);
   const [loading, setLoading] = useState(true);
   // const [assetTypeList, setAssetTypeList] = useState([]);
   const [streetViewAvailable, setStreetViewAvailable] = useState(true);
-
 
   const panoramaRef = useRef(null);
 
@@ -45,7 +41,7 @@ const PropertiesSection = ({isLoaded}) => {
 
       try {
         const response = await axios.post(
-          process.env.REACT_APP_FETCH_HOMEDATA_URL,
+          `${process.env.REACT_APP_DEV_URL}/common/latest_six/property`,
           formData
           // {
           //   headers: {
@@ -106,180 +102,176 @@ const PropertiesSection = ({isLoaded}) => {
         ) : (
           <div className="properties-grid">
             {properties.map((property) => {
-                const getAssetTypeName = (property) => {
-                  let assetTypeList = [];
-                  const assetTypeId = property?.asset_type;
-                  // Case 1: asset_type is present — find it in assetTypeList
-                  if (assetTypeId) {
-                    const matchingAsset = assetTypeList.find(
-                      (type) => type?.common_id === assetTypeId
-                    );
-                    return matchingAsset?.common_name || "N/A";
-                  }
-                  // Case 2: asset_type is empty — check property_type
-                  if (property?.property_type) {
-                    return property.property_type;
-                  }
-                  // Case 3: property_type is empty — check house
-                  if (property?.house) {
-                    return property.house;
-                  }
-                  // Case 4: Everything is empty
-                  return "N/A";
-                };
-              
+            
+
               return (
-              <a
-                href={`https://webapp.flippbidd.com/property/property-detail/${property?.common_id} `}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <div className="property-card" key={property.common_id}>
-                  <div className="property-image">
-                    {property?.images?.length > 0 ? (
-                      <img
-                        src={
-                          property.images[0]?.image_name
-                            ? property.images[0]?.image_name
-                            : "https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM="
-                        }
-                        alt={property.type}
-                      />
-                    ) : isLoaded && streetViewAvailable ? (
-                      <div
-                        className={`rounded-top streetView`}
-                        style={{ height: "200px" }}
-                      >
-                        <GoogleMap
-                          mapContainerStyle={{ width: "100%", height: "100%" }}
-                          center={{
-                            lat: Number(property?.lat),
-                            lng: Number(property?.lang),
-                          }}
-                          zoom={14}
-                          options={{
-                            streetViewControl: false,
-                            fullscreenControl: false,
-                            disableDefaultUI: true,
-                          }}
+                <a
+                  href={`https://webapp.flippbidd.com/property/property-detail/${property?.common_id} `}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <div className="property-card" key={property.common_id}>
+                    <div
+                      className={`${
+                        property?.images?.length > 0
+                          ? "property-image"
+                          : "static-image property-image "
+                      }`}
+                    >
+                      {property?.images?.length > 0 ? (
+                        <img
+                          src={
+                            property.images[0]?.image_name
+                              ? property.images[0]?.image_name
+                              : "https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM="
+                          }
+                          alt={property.type}
+                        />
+                      ) : isLoaded && streetViewAvailable ? (
+                        <div
+                          className={`rounded-top streetView`}
+                          style={{ height: "200px" }}
                         >
-                          <StreetViewPanorama
-                            onLoad={handleStreetViewLoad}
+                          <GoogleMap
+                            mapContainerStyle={{
+                              width: "100%",
+                              height: "100%",
+                            }}
+                            center={{
+                              lat: Number(property?.lat),
+                              lng: Number(property?.lang),
+                            }}
+                            zoom={14}
                             options={{
-                              position: {
-                                lat: Number(property?.lat),
-                                lng: Number(property?.lang),
-                              },
-                              visible: true,
-                              pov: { heading: 100, pitch: 0 },
-                              zoom: 1,
-                              disableDefaultUI: true,
-                              zoomControl: false,
-                              showRoadLabels: false,
-                              addressControl: false,
-                              linksControl: false,
-                              panControl: false,
+                              streetViewControl: false,
                               fullscreenControl: false,
+                              disableDefaultUI: true,
+                            }}
+                          >
+                            <StreetViewPanorama
+                              onLoad={handleStreetViewLoad}
+                              options={{
+                                position: {
+                                  lat: Number(property?.lat),
+                                  lng: Number(property?.lang),
+                                },
+                                visible: true,
+                                pov: { heading: 100, pitch: 0 },
+                                zoom: 1,
+                                disableDefaultUI: true,
+                                zoomControl: false,
+                                showRoadLabels: false,
+                                addressControl: false,
+                                linksControl: false,
+                                panControl: false,
+                                fullscreenControl: false,
+                              }}
+                            />
+                          </GoogleMap>
+                        </div>
+                      ) : (
+                        <img
+                          src={IMAGES.FLIPPBIDD_PLACEHOLDER}
+                          alt={property.type}
+                        />
+                      )}
+                    </div>
+                    <div className="property-info">
+                      <div className="property-category-wrapper">
+                        <div className="property-category">
+                          {property?.sale_type ? property?.sale_type : "N/A"}
+                        </div>
+                      </div>
+                      <h3 className="property-title !mb-2">
+                        {property?.asset_type_name ?? property?.property_type ?? property?.house ?? "N/A"}
+                      </h3>
+                      <div className="property-features">
+                        <span className="feature">
+                          <i className="fas fa-bed"></i> {property.bed_nos}
+                        </span>
+                        <span className="feature">
+                          <img
+                            src={getImageUrl(IMAGES.SHOWER_ICON)}
+                            alt="Baths"
+                            style={{
+                              width: "19px",
+                              height: "19px",
+                              marginRight: "5px",
                             }}
                           />
-                        </GoogleMap>
+                          {property.bath_nos}
+                        </span>
+                        <span className="feature">
+                          <img
+                            src={getImageUrl(IMAGES.SQUARE_FOOT_ICON)}
+                            alt="Square Feet"
+                            style={{
+                              width: "14px",
+                              height: "14px",
+                              marginRight: "5px",
+                            }}
+                          />
+                          {property.area ? property.area : property.bldgsize}{" "}
+                          {property.area_measure}
+                        </span>
                       </div>
-                    ) : (
-                      <img
-                        src={IMAGES.FLIPPBIDD_PLACEHOLDER}
-                        alt={property.type}
-                      />
-                    )}
-                  </div>
-                  <div className="property-info">
-                    <div className="property-category-wrapper">
-                      <div className="property-category">
-                        {property?.sale_type ? property?.sale_type : "N/A"}
-                      </div>
-                    </div>  
-                    <h3 className="property-title !mb-2">
-                      {getAssetTypeName(property)}
-                    </h3>
-                    <div className="property-features">
-                      <span className="feature">
-                        <i className="fas fa-bed"></i> {property.bed_nos}
-                      </span>
-                      <span className="feature">
+                      <div className="property-address">
                         <img
-                          src={getImageUrl(IMAGES.SHOWER_ICON)}
-                          alt="Baths"
+                          src={getImageUrl(IMAGES.LOCATION_ICON)}
+                          alt="Location"
                           style={{
-                            width: "19px",
-                            height: "19px",
-                            marginRight: "5px",
-                          }}
-                        />
-                        {property.bath_nos}
-                      </span>
-                      <span className="feature">
-                        <img
-                          src={getImageUrl(IMAGES.SQUARE_FOOT_ICON)}
-                          alt="Square Feet"
-                          style={{
-                            width: "14px",
-                            height: "14px",
-                            marginRight: "5px",
-                          }}
-                        />
-                        {property.area ? property.area : property.bldgsize}{" "}
-                        {property.area_measure}
-                      </span>
-                    </div>
-                    <div className="property-address">
-                      <img
-                        src={getImageUrl(IMAGES.LOCATION_ICON)}
-                        alt="Location"
-                        style={{
-                          width: "15px",
-                          height: "15px",
-                          marginRight: "5px",
-                          marginTop: "2px",
-                        }}
-                      />
-                   <p className="truncate">
-                   {property?.address ?? "N/A"}
-                   </p>
-                    </div>
-                    <div className="property-actions">
-                      <button
-                        // target="_blank"
-                        // rel="noopener noreferrer"
-                        // href={`https://webapp.flippbidd.com/property/property-detail/${property?.common_id} `}
-                        className="view-details-btn"
-                      >
-                        View Details
-                      </button>
-                      <div className="property-price">
-                        <img
-                          src={getImageUrl(IMAGES.DOLLAR_ICON)}
-                          alt="Dollar"
-                          style={{
-                            width: "20px",
-                            height: "20px",
+                            width: "15px",
+                            height: "15px",
                             marginRight: "5px",
                             marginTop: "2px",
                           }}
                         />
-                        {property.rent_amount ? property.rent_amount : "N/A"}
+                        <p className="truncate">{property?.address ?? "N/A"}</p>
+                      </div>
+                      <div className="property-actions">
+                        <button
+                          // target="_blank"
+                          // rel="noopener noreferrer"
+                          // href={`https://webapp.flippbidd.com/property/property-detail/${property?.common_id} `}
+                          className="view-details-btn"
+                        >
+                          View Details
+                        </button>
+                        <div className="property-price">
+                          <img
+                            src={getImageUrl(IMAGES.DOLLAR_ICON)}
+                            alt="Dollar"
+                            style={{
+                              width: "20px",
+                              height: "20px",
+                              marginRight: "5px",
+                              marginTop: "2px",
+                            }}
+                          />
+                          <span className="mt-[5px]">
+                            {property.rent_amount
+                              ? property.rent_amount
+                              : "N/A"}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              </a>
-            );
-          })}
+                </a>
+              );
+            })}
           </div>
         )}
 
         <div className="see-more-container">
-          <Link to="/properties" className="see-more-btn">
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            href={`${process.env.REACT_APP_WEBAPP_URL}/new-properties`}
+            className="see-more-btn"
+          >
             See More
-          </Link>
+          </a>
         </div>
       </div>
     </section>

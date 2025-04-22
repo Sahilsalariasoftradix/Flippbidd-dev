@@ -16,7 +16,7 @@ const AppAvailabilitySection = () => {
           <p className="availability-subtitle">WebApp Package Coming Spring 2025!</p>
           
           <div className="app-store-buttons">
-            <a href={process.env.REACT_APP_} className="store-button" target="_blank" rel="noopener noreferrer">
+            <a href={process.env.REACT_APP_FLIPPBID_APPLE_STORE_URL} className="store-button" target="_blank" rel="noopener noreferrer">
               <img src={getImageUrl(IMAGES.APPLE_STORE)} alt="Download on the App Store" />
             </a>
             <a href={process.env.REACT_APP_FLIPPBID_GOOGLE_PLAY_URL} className="store-button" target="_blank" rel="noopener noreferrer">

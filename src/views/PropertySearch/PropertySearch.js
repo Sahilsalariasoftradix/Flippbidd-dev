@@ -19,7 +19,7 @@ const propertySearchSchema = z.object({
   email: z
     .string()
     .min(1, { message: "Email is required." })
-    .email("This is not a valid email."),
+    .email("Invalid email address."),
     phone: z
     .string()
     .nonempty("Phone number is required")

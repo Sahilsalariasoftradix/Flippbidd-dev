@@ -40,7 +40,8 @@ const PricingSection = () => {
       features: [
         'Mobile Device Access',
         '100 SkipTraces/Month'
-      ]
+      ],
+      link: '/subscribe?plan=pro'
     },
     {
       id: 2,
@@ -52,8 +53,10 @@ const PricingSection = () => {
         'WebApp + Mobile Device Access',
         '100 Property Reports',
         'FlippBidd Leads',
+        'National Investor Search',
         '100 SkipTraces/Month'
-      ]
+      ],
+      link: '/subscribe?plan=web'
     },
     {
       id: 3,
@@ -66,7 +69,8 @@ const PricingSection = () => {
         'Virtual Tours w/ RSVP Reminders',
         '500 Property Reports',
         '200 SkipTraces/Month'
-      ]
+      ],
+      link: '/subscribe?plan=pro-plus'
     }
   ];
 
@@ -109,7 +113,7 @@ const PricingSection = () => {
               </div>
               
               <div className="price-action">
-                <Link to="/subscribe" className="subscribe-btn">Subscribe</Link>
+                <a target="_blank" rel="noopener noreferrer" href={`${process.env.REACT_APP_WEBAPP_URL}/subscribe?plan=${plan.link}`} className="subscribe-btn">Subscribe</a>
               </div>
             </div>
           ))}
