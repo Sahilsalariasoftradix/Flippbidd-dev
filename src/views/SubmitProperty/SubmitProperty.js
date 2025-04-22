@@ -29,6 +29,7 @@ const SubmitProperty = () => {
   const [searchBox, setSearchBox] = useState(null);
   const [audioFile, setAudioFile] = useState(null);
   const [audioSrc, setAudioSrc] = useState(null);
+  // eslint-disable-next-line
   const [hasDeletedAudio, setHasDeletedAudio] = useState(false);
   const [validPlaceSelected, setValidPlaceSelected] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -69,9 +70,9 @@ const SubmitProperty = () => {
     sellerName: z.string().min(1, { message: "Seller Name is required" }),
     companyName: z.string().min(1, { message: "Company Name is required" }),
     email: z
-    .string()
-    .nonempty("Email address is required") // When the field is empty
-    .email("Email address is invalid"), // When the field is not a valid email
+      .string()
+      .nonempty("Email address is required") // When the field is empty
+      .email("Email address is invalid"), // When the field is not a valid email
     // phone: z
     //   .string()
     //   .regex(/^\d{11}$/, "Phone number must be 7-15 digits")
@@ -412,6 +413,7 @@ const SubmitProperty = () => {
         }
       };
     }
+    // eslint-disable-next-line
   }, [audioSrc, IMAGES.STOP_ICON, IMAGES.PLAY_ICON]);
 
   // Add this function to format the recording time
@@ -508,9 +510,8 @@ const SubmitProperty = () => {
                             </label>
                             <input
                               type="text"
-                              className={`form-control ${
-                                sellerErrors.sellerName ? "!border-red-500" : ""
-                              }`}
+                              className={`form-control ${sellerErrors.sellerName ? "!border-red-500" : ""
+                                }`}
                               placeholder="Seller Name"
                               {...registerSeller("sellerName")}
                             />
@@ -530,11 +531,10 @@ const SubmitProperty = () => {
                             </label>
                             <input
                               type="text"
-                              className={`form-control ${
-                                sellerErrors.companyName
-                                  ? "!border-red-500"
-                                  : ""
-                              }`}
+                              className={`form-control ${sellerErrors.companyName
+                                ? "!border-red-500"
+                                : ""
+                                }`}
                               placeholder="Company Name"
                               {...registerSeller("companyName")}
                             />
@@ -554,9 +554,8 @@ const SubmitProperty = () => {
                             </label>
                             <input
                               type="text"
-                              className={`form-control ${
-                                sellerErrors.email ? "!border-red-500" : ""
-                              }`}
+                              className={`form-control ${sellerErrors.email ? "!border-red-500" : ""
+                                }`}
                               placeholder="Email"
                               {...registerSeller("email")}
                             />
@@ -577,9 +576,8 @@ const SubmitProperty = () => {
                                 });
                               }}
                               containerClass={`phone-input-wrapper`}
-                              inputClass={` ${
-                                sellerErrors.phone ? "!border-red-500" : ""
-                              } phone-input-field`}
+                              inputClass={` ${sellerErrors.phone ? "!border-red-500" : ""
+                                } phone-input-field`}
                               buttonClass="country-dropdown"
                               placeholder="Phone"
                               dropdownClass="country-dropdown-list"
@@ -621,11 +619,10 @@ const SubmitProperty = () => {
                               >
                                 <input
                                   type="text"
-                                  className={`form-control ${
-                                    propertyErrors.propertyAddress
-                                      ? "!border-red-500"
-                                      : ""
-                                  }`}
+                                  className={`form-control ${propertyErrors.propertyAddress
+                                    ? "!border-red-500"
+                                    : ""
+                                    }`}
                                   placeholder="Enter Your Property Address"
                                   {...registerProperty("propertyAddress")}
                                   value={address}
@@ -689,11 +686,10 @@ const SubmitProperty = () => {
                                   />
                                 </label>
                                 <select
-                                  className={`form-control !bg-transparent !py-[14px] ${
-                                    propertyErrors.saleType
-                                      ? "!border-red-500"
-                                      : ""
-                                  }`}
+                                  className={`form-control !bg-transparent !py-[14px] ${propertyErrors.saleType
+                                    ? "!border-red-500"
+                                    : ""
+                                    }`}
                                   {...registerProperty("saleType")}
                                 >
                                   <option selected value="">
@@ -745,11 +741,10 @@ const SubmitProperty = () => {
                                 </label>
                                 <input
                                   type="text"
-                                  className={`form-control ${
-                                    propertyErrors.propertyPrice
-                                      ? "!border-red-500"
-                                      : ""
-                                  }`}
+                                  className={`form-control ${propertyErrors.propertyPrice
+                                    ? "!border-red-500"
+                                    : ""
+                                    }`}
                                   placeholder="Enter Property Price"
                                   {...registerProperty("propertyPrice")}
                                   onInput={handleIntegerInput}
@@ -772,9 +767,8 @@ const SubmitProperty = () => {
                                 </label>
                                 <input
                                   type="text"
-                                  className={`form-control ${
-                                    propertyErrors.beds ? "!border-red-500" : ""
-                                  }`}
+                                  className={`form-control ${propertyErrors.beds ? "!border-red-500" : ""
+                                    }`}
                                   placeholder="Enter no. of Beds"
                                   {...registerProperty("beds")}
                                   onInput={handleIntegerInput}
@@ -797,11 +791,10 @@ const SubmitProperty = () => {
                                 </label>
                                 <input
                                   type="text"
-                                  className={`form-control ${
-                                    propertyErrors.baths
-                                      ? "!border-red-500"
-                                      : ""
-                                  }`}
+                                  className={`form-control ${propertyErrors.baths
+                                    ? "!border-red-500"
+                                    : ""
+                                    }`}
                                   placeholder="Enter no. of Baths"
                                   {...registerProperty("baths")}
                                   onInput={handleIntegerInput}
@@ -824,11 +817,10 @@ const SubmitProperty = () => {
                                 </label>
                                 <input
                                   type="text"
-                                  className={`form-control ${
-                                    propertyErrors.totalSqFt
-                                      ? "!border-red-500"
-                                      : ""
-                                  }`}
+                                  className={`form-control ${propertyErrors.totalSqFt
+                                    ? "!border-red-500"
+                                    : ""
+                                    }`}
                                   placeholder="Enter Total sq Ft. Area"
                                   {...registerProperty("totalSqFt")}
                                   onInput={handleIntegerInput}
@@ -850,11 +842,10 @@ const SubmitProperty = () => {
                                   />
                                 </label>
                                 <select
-                                  className={`form-control !bg-transparent !py-[14px] ${
-                                    propertyErrors.assetType
-                                      ? "!border-red-500"
-                                      : ""
-                                  }`}
+                                  className={`form-control !bg-transparent !py-[14px] ${propertyErrors.assetType
+                                    ? "!border-red-500"
+                                    : ""
+                                    }`}
                                   {...registerProperty("assetType")}
                                 >
                                   <option selected value="">
@@ -1233,9 +1224,8 @@ const SubmitProperty = () => {
                             </span>
                             <button
                               type="submit"
-                              className={`btn btn-primary-gradient ${
-                                loading && "loading"
-                              }`}
+                              className={`btn btn-primary-gradient ${loading && "loading"
+                                }`}
                               style={{ flexGrow: 1, marginLeft: "10px" }}
                             >
                               Submit

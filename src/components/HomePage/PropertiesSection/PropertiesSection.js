@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
 import { IMAGES } from "../../../utils/constants";
 import "./PropertiesSection.css";
 import axios from "axios";
@@ -102,7 +102,7 @@ const PropertiesSection = ({ isLoaded }) => {
         ) : (
           <div className="properties-grid">
             {properties.map((property) => {
-            
+
 
               return (
                 <a
@@ -112,11 +112,10 @@ const PropertiesSection = ({ isLoaded }) => {
                 >
                   <div className="property-card" key={property.common_id}>
                     <div
-                      className={`${
-                        property?.images?.length > 0
+                      className={`${property?.images?.length > 0
                           ? "property-image"
                           : "static-image property-image "
-                      }`}
+                        }`}
                     >
                       {property?.images?.length > 0 ? (
                         <img
