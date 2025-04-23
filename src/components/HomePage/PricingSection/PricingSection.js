@@ -5,7 +5,7 @@ import './PricingSection.css';
 const PricingSection = () => {
   const [selectedPlan, setSelectedPlan] = useState(null);
   const sectionRef = useRef(null);
-  
+
   // Helper function to get absolute URL for images
   const getImageUrl = (path) => {
     return `${window.location.origin}${path}`;
@@ -15,9 +15,9 @@ const PricingSection = () => {
   useEffect(() => {
     const handleClickOutside = (event) => {
       // If the click wasn't on a pricing card, unselect
-      if (sectionRef.current && 
-          !event.target.closest('.pricing-card') && 
-          sectionRef.current.contains(event.target)) {
+      if (sectionRef.current &&
+        !event.target.closest('.pricing-card') &&
+        sectionRef.current.contains(event.target)) {
         setSelectedPlan(null);
       }
     };
@@ -40,7 +40,7 @@ const PricingSection = () => {
         'Mobile Device Access',
         '100 SkipTraces/Month'
       ],
-      link: '/subscribe?plan=pro'
+      link: '?Subscription=pro-license'
     },
     {
       id: 2,
@@ -55,7 +55,7 @@ const PricingSection = () => {
         'National Investor Search',
         '100 SkipTraces/Month'
       ],
-      link: '/subscribe?plan=web'
+      link: '?Subscription=webapp'
     },
     {
       id: 3,
@@ -69,7 +69,7 @@ const PricingSection = () => {
         '500 Property Reports',
         '200 SkipTraces/Month'
       ],
-      link: '/subscribe?plan=pro-plus'
+      link: '?Subscription=pro-plus'
     }
   ];
 
@@ -80,16 +80,16 @@ const PricingSection = () => {
   return (
     <section className="pricing-section" ref={sectionRef}>
       <div className="container" >
-        
+
         <h2 className="section-title">
           <span className="highlight">FlippBidd</span>{' '}
           <span className="normal-text">Pricing & Plans</span>
         </h2>
-        
+
         <div className="pricing-grid">
           {plans.map(plan => (
-            <div 
-              key={plan.id} 
+            <div
+              key={plan.id}
               className={`pricing-card ${plan.featured ? 'featured' : ''} ${selectedPlan === plan.id ? 'selected' : ''}`}
               onClick={(e) => {
                 e.stopPropagation(); // Prevent the click from bubbling to section
@@ -101,7 +101,7 @@ const PricingSection = () => {
                 <h3 className="price-amount bg-gradient-to-r from-[#003F79] via-[#0160b8] to-[#00ACDB] inline-block text-transparent bg-clip-text">{plan.price}<span className="!text-sm">/Month</span></h3>
                 <h4 className="price-title">{plan.title}</h4>
               </div>
-              
+
               <div className="price-features">
                 {plan.features.map((feature, index) => (
                   <div key={index} className="price-feature">
@@ -110,7 +110,7 @@ const PricingSection = () => {
                   </div>
                 ))}
               </div>
-              
+
               <div className="price-action">
                 <a target="_blank" rel="noopener noreferrer" href={`${process.env.REACT_APP_WEBAPP_URL}${plan.link}`} className="subscribe-btn">Subscribe</a>
               </div>
