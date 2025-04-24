@@ -26,7 +26,7 @@ const LeadSection = () => {
         </div>
         
         <div className="text-center">
-          <button className="btn-gradient">Click Here</button>
+          <a href='mailto:LetsNetwork@FlippBidd.com?subject=Lead%20Partners'  className="btn-gradient">Click Here</a>
         </div>
       </div>
     </section>

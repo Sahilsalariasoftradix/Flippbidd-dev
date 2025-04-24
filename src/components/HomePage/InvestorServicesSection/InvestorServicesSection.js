@@ -24,7 +24,7 @@ const InvestorServicesSection = () => {
               
               <div className="service-email">
                 <img src={IMAGES.GRADIENT_MAIL} alt="Email" className="email-icon" />
-                <a href="mailto:LetsNetwork@flippbidd.com" className='text-xs'>LetsNetwork@flippbidd.com</a>
+                <a href="mailto:LetsNetwork@flippbidd.com?FlippBidd%20Pro-services" className='text-xs'>LetsNetwork@flippbidd.com</a>
               </div>
             </div>
               
@@ -33,7 +33,7 @@ const InvestorServicesSection = () => {
                 A premium platform connecting real estate professionals with top-tier investment opportunities, tools, and resources.
               </p>
               
-              <a href="#contact" className="contact-button white-button"><span>Contact Us</span></a>
+              <a href="mailto:LetsNetwork@flippbidd.com?FlippBidd%20Pro-services" className="contact-button white-button"><span>Contact Us</span></a>
             </div>
           </div>
           
@@ -47,7 +47,7 @@ const InvestorServicesSection = () => {
               
               <div className="service-email">
                 <img src={IMAGES.GRADIENT_MAIL} alt="Email" className="email-icon" />
-                <a href="mailto:LetsNetwork@flippbidd.com" className='text-xs'>LetsNetwork@flippbidd.com</a>
+                <a href="mailto:LetsNetwork@flippbidd.com?National%20Lenders" className='text-xs'>LetsNetwork@flippbidd.com</a>
               </div>
             </div>
               
@@ -56,7 +56,7 @@ const InvestorServicesSection = () => {
                 Stay ahead of the Competition! Get Real-Time Leads of Investors Nationally right to your Inbox or CRM's when they view a real-estate investment.
               </p>
               
-              <a href="#contact" className="contact-button gradient-button">Contact Us</a>
+              <a href="mailto:LetsNetwork@flippbidd.com?National%20Lenders" className="contact-button gradient-button">Contact Us</a>
             </div>
           </div>
         </div>

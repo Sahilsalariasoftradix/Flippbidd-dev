@@ -86,13 +86,13 @@ const AffiliateSection = () => {
                   </div>
 
                   <a
-                    href="mailto:LetsNetwork@FlippBidd.com"
+                    href="mailto:LetsNetwork@FlippBidd.com?subject=FlippBidd%20Affiliate"
                     className="btn-email h-[38px] border border-white border-solid"
                   >
                     <div>
                       <img src="/images/svg/mail_ic.svg" alt="Email" />
                     </div>
-                    <a href="mailto:LetsNetwork@FlippBidd.com">LetsNetwork@FlippBidd.com</a>
+                    <a href="mailto:LetsNetwork@FlippBidd.com?subject=FlippBidd%20Affiliate">LetsNetwork@FlippBidd.com</a>
                   </a>
                 </div>
               </div>

@@ -31,6 +31,7 @@ export const IMAGES = {
   LOGO: '/images/png/logo_ic.png',
   FOOTER_LOGO: '/images/svg/footer_logo_ic.svg',
   HOME_BG: '/images/png/home_img_bg.png',
+  HOME_BG_2: '/images/png/newbg.png',
   FEATURE_BG: '/images/png/new-bidd.png',
   POLYGON_BG: '/images/png/polygon-search.png',
   DEMO_PROPERTY_BG: '/images/png/demo_property_bg.png',

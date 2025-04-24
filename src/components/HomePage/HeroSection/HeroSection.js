@@ -62,7 +62,7 @@ const HeroSection = ({isLoaded, loadError}) => {
   }
 
   return (
-    <section className="hero-section" style={{ backgroundImage: `url(${getImageUrl(IMAGES.HOME_BG)})` }}>
+    <section className="hero-section" style={{ backgroundImage: `url(${getImageUrl(IMAGES.HOME_BG_2)})` }}>
       <div className="overlay"></div>
       
       <div className="video-call-container">
