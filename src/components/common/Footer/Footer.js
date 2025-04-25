@@ -10,9 +10,9 @@ import toast from "react-hot-toast";
 
 const newsletterSchema = z.object({
   email: z
-  .string()
-  .nonempty("Email address is required") // When the field is empty
-  .email("Email address is invalid"), // When the field is not a valid email
+    .string()
+    .nonempty("Email address is required") // When the field is empty
+    .email("Email address is invalid"), // When the field is not a valid email
 });
 
 const Footer = () => {
@@ -43,7 +43,7 @@ const Footer = () => {
     } catch (error) {
       toast.error(
         error.response?.data?.message ||
-          "Failed to subscribe. Please try again."
+        "Failed to subscribe. Please try again."
       );
       console.error("Newsletter subscription error:", error);
     } finally {
@@ -180,7 +180,7 @@ const Footer = () => {
                 </div>
                 <div className="contact-item">
                   <i className="fas fa-phone-alt"></i>
-                  <a href="tel:+13766883295">+1 376-688-3295</a>
+                  <a href="tel:+18383683257">+1 838-368-3257</a>
                 </div>
               </div>
 
