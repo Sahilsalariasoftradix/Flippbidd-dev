@@ -55,7 +55,7 @@ const PricingSection = () => {
         'National Investor Search',
         '100 SkipTraces/Month'
       ],
-      link: '/home?subscribe=webapp'
+      link: '/home?Subscription=webapp'
     },
     {
       id: 3,
