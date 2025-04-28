@@ -1,19 +1,19 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { IMAGES, TEXT } from '../../../utils/constants';
-import {  StandaloneSearchBox } from '@react-google-maps/api';
+import { StandaloneSearchBox } from '@react-google-maps/api';
 import './HeroSection.css';
 
 
 
-const HeroSection = ({isLoaded, loadError}) => {
+const HeroSection = ({ isLoaded, loadError }) => {
   const [address, setAddress] = useState('');
   const [loading, setLoading] = useState(false);
   const [searchBox, setSearchBox] = useState(null);
   const [validPlaceSelected, setValidPlaceSelected] = useState(false);
   const navigate = useNavigate();
 
- 
+
 
   const onLoad = (ref) => {
     setSearchBox(ref);
@@ -38,7 +38,7 @@ const HeroSection = ({isLoaded, loadError}) => {
     try {
       // Store the search address in localStorage for use in PropertySearch
       localStorage.setItem('searchAddress', address);
-      
+
       // Redirect to the PropertySearch page
       navigate('/property-search');
     } catch (error) {
@@ -58,51 +58,51 @@ const HeroSection = ({isLoaded, loadError}) => {
   }
 
   if (!isLoaded) {
-    return <div>Loading...</div>; 
+    return <div>Loading...</div>;
   }
 
   return (
     <section className="hero-section" style={{ backgroundImage: `url(${getImageUrl(IMAGES.HOME_BG_2)})` }}>
       <div className="overlay"></div>
-      
+
       <div className="video-call-container">
-        <a href={process.env.REACT_APP_FLIPPBID_CALENDLY_URL} target='_blank' rel="noopener noreferrer">
-        <img src={getImageUrl(IMAGES.VIDEO_CALL_BG)} alt="Video Call" className="video-call-image" />
+        <a href={process.env.REACT_APP_FLIPPBID_ZOOM_URL} target='_blank' rel="noopener noreferrer">
+          <img src={getImageUrl(IMAGES.VIDEO_CALL_BG)} alt="Video Call" className="video-call-image" />
         </a>
       </div>
-      
+
       <div className="container">
         <div className="hero-content">
           <h1 className="hero-title">{TEXT.TAGLINE}</h1>
-          
+
           <div className="search-container">
             <form onSubmit={handleSearch} className="search-form">
               <div className="search-input-wrapper">
-              <div className='flex w-full'>
-              <div className="search-icon">
-                  <i className="fas fa-search"></i>
-                </div >
-                <div className='w-full '>
-                <StandaloneSearchBox
-                  onLoad={onLoad}
-                  onPlacesChanged={onPlacesChanged}
-                >
-                  <input
-                    type="text"
-                    placeholder="Search Property by location..."
-                    className="search-input w-full min-w-[300px]"
-                    value={address}
-                    onChange={(e) => {
-                      setAddress(e.target.value);
-                      setValidPlaceSelected(false);
-                    }}
-                  />
-                </StandaloneSearchBox>
+                <div className='flex w-full'>
+                  <div className="search-icon">
+                    <i className="fas fa-search"></i>
+                  </div >
+                  <div className='w-full '>
+                    <StandaloneSearchBox
+                      onLoad={onLoad}
+                      onPlacesChanged={onPlacesChanged}
+                    >
+                      <input
+                        type="text"
+                        placeholder="Search Property by location..."
+                        className="search-input w-full min-w-[300px]"
+                        value={address}
+                        onChange={(e) => {
+                          setAddress(e.target.value);
+                          setValidPlaceSelected(false);
+                        }}
+                      />
+                    </StandaloneSearchBox>
+                  </div>
                 </div>
-              </div>
-                <button 
-                  type="submit" 
-                  className={`search-button ${!validPlaceSelected ? 'disabled' : ''}`} 
+                <button
+                  type="submit"
+                  className={`search-button ${!validPlaceSelected ? 'disabled' : ''}`}
                   disabled={loading || !validPlaceSelected}
                 >
                   Search
@@ -112,7 +112,7 @@ const HeroSection = ({isLoaded, loadError}) => {
           </div>
         </div>
       </div>
-      
+
       {/* Download Section - Bottom */}
       <div className="container">
         <div className="download-section">
