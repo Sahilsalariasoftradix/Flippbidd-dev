@@ -20,7 +20,7 @@ const propertySearchSchema = z.object({
     .string()
     .min(1, { message: "Email is required." })
     .email("Invalid email address."),
-    phone: z
+  phone: z
     .string()
     .nonempty("Phone number is required")
     .min(7, "Phone number should be 7-15 digits"),
@@ -30,16 +30,15 @@ const propertySearchSchema = z.object({
 // Common function to get professions data
 const getProfessionsData = () => {
   return [
-    { id: 1, name: "Real Estate Agent" },
-    { id: 2, name: "Real Estate Broker" },
-    { id: 3, name: "Investor" },
-    { id: 4, name: "Property Manager" },
-    { id: 5, name: "Appraiser" },
-    { id: 6, name: "Home Inspector" },
-    { id: 7, name: "Mortgage Broker" },
-    { id: 8, name: "Contractor" },
-    { id: 9, name: "Developer" },
-    { id: 10, name: "Other" },
+    { id: 1, name: "Investor" },
+    { id: 2, name: "Wholesaler" },
+    { id: 4, name: "Realtor" },
+    { id: 5, name: "Broker" },
+    { id: 6, name: "Real Estate Specialist" },
+    { id: 7, name: "Acquisitions Rep" },
+    { id: 8, name: "Dispositions Rep" },
+    { id: 12, name: "Real Estate Enthusiast" },
+    { id: 13, name: "Academic Student" }
   ];
 };
 
@@ -135,12 +134,12 @@ const PropertySearch = () => {
         } else {
           toast.error(response.data.message);
         }
-      
+
       }
     } catch (error) {
       toast.error(
         error.response?.data?.message ||
-          "Failed to submit property data. Please try again."
+        "Failed to submit property data. Please try again."
       );
     } finally {
       setIsLoading(false);
@@ -213,9 +212,8 @@ const PropertySearch = () => {
             <h2>Request Property Values</h2>
             <form onSubmit={handleSubmit(onSubmit)}>
               <div
-                className={`input-group ${
-                  errors.address ? "!border-red-500" : ""
-                }`}
+                className={`input-group ${errors.address ? "!border-red-500" : ""
+                  }`}
               >
                 <img src={IMAGES.GRADIENT_LOCATION} alt="location" />
                 <div className="w-full">
@@ -226,9 +224,8 @@ const PropertySearch = () => {
                     <input
                       type="text"
                       placeholder="Enter Property Address"
-                      className={`w-full ${
-                        errors.address ? "!border-red-500" : ""
-                      }`}
+                      className={`w-full ${errors.address ? "!border-red-500" : ""
+                        }`}
                       value={address}
                       onChange={(e) => {
                         setAddress(e.target.value);
@@ -247,9 +244,8 @@ const PropertySearch = () => {
                 </p>
               )}
               <div
-                className={`input-group ${
-                  errors.fullName ? "!border-red-500" : ""
-                }`}
+                className={`input-group ${errors.fullName ? "!border-red-500" : ""
+                  }`}
               >
                 <img src={IMAGES.GRADIENT_USER} alt="user" />
                 <input
@@ -264,9 +260,8 @@ const PropertySearch = () => {
                 </p>
               )}
               <div
-                className={`input-group ${
-                  errors.email ? "!border-red-500" : ""
-                }`}
+                className={`input-group ${errors.email ? "!border-red-500" : ""
+                  }`}
               >
                 <img src={IMAGES.GRADIENT_MAIL} alt="email" />
                 <input
@@ -290,9 +285,8 @@ const PropertySearch = () => {
                     setValue("phone", value, { shouldValidate: true });
                   }}
                   containerClass={`phone-input-wrapper`}
-                  inputClass={` ${
-                    errors.phone ? "!border-red-500" : ""
-                  } phone-input-field`}
+                  inputClass={` ${errors.phone ? "!border-red-500" : ""
+                    } phone-input-field`}
                   buttonClass="country-dropdown"
                   placeholder="Phone"
                   dropdownClass="country-dropdown-list"
@@ -304,9 +298,8 @@ const PropertySearch = () => {
                 </p>
               )}
               <div
-                className={`input-group ${
-                  errors.profession ? "!border-red-500" : ""
-                }`}
+                className={`input-group ${errors.profession ? "!border-red-500" : ""
+                  }`}
               >
                 <img src={IMAGES.GRADIENT_USER} alt="profession" />
                 <select
